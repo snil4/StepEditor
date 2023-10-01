@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3 uid="uid://dd2nfqupg7qfe"]
+
+[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Sprites/metal_normal.png" id="1_1anc2"]
+[ext_resource type="Script" path="res://Scripts/Editor.gd" id="1_irovr"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_j1who"]
+a = Vector2(-200, 2.08165e-12)
+b = Vector2(300, 2.08165e-12)
+
+[node name="Editor" type="Node2D"]
+script = ExtResource("1_irovr")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Background" type="ColorRect" parent="Control"]
+custom_minimum_size = Vector2(576, 1024)
+layout_mode = 0
+offset_right = 1024.0
+offset_bottom = 1024.0
+color = Color(0, 0, 0, 1)
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(567, 95)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-2.08165e-12, 1)
+shape = SubResource("SegmentShape2D_j1who")
+
+[node name="Left" type="Sprite2D" parent="Area2D"]
+position = Vector2(-100, 2.08165e-12)
+rotation = 1.5708
+texture = ExtResource("1_1anc2")
+
+[node name="Down" type="Sprite2D" parent="Area2D"]
+position = Vector2(-35, 2.08165e-12)
+texture = ExtResource("1_1anc2")
+
+[node name="Up" type="Sprite2D" parent="Area2D"]
+position = Vector2(30, 2.08165e-12)
+rotation = 3.14159
+texture = ExtResource("1_1anc2")
+
+[node name="Right" type="Sprite2D" parent="Area2D"]
+position = Vector2(95, 2.08165e-12)
+rotation = -1.5708
+texture = ExtResource("1_1anc2")
+
+[node name="LineLeft" type="Line2D" parent="Area2D"]
+position = Vector2(-150, 11)
+points = PackedVector2Array(-1, -127, -1, 5000)
+width = 2.0
+default_color = Color(0.713726, 0.713726, 0.713726, 1)
+
+[node name="LineRight" type="Line2D" parent="Area2D"]
+position = Vector2(150, 11)
+points = PackedVector2Array(-1, -127, -1, 5000)
+width = 2.0
+default_color = Color(0.713726, 0.713726, 0.713726, 1)
