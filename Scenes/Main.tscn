@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dpncvve46oilr"]
+[gd_scene load_steps=10 format=3 uid="uid://dpncvve46oilr"]
 
 [ext_resource type="PackedScene" uid="uid://dd2nfqupg7qfe" path="res://Scenes/Editor.tscn" id="1_aw7xw"]
 [ext_resource type="Script" path="res://Scripts/FileMenu.gd" id="1_b857c"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://Scripts/HelpMenu.gd" id="4_p076m"]
 [ext_resource type="Script" path="res://Scripts/Parser.gd" id="5_bb8wl"]
 [ext_resource type="Script" path="res://Scripts/AboutDialog.gd" id="7_ufk08"]
+[ext_resource type="Script" path="res://Scripts/ExitDialog.gd" id="8_71i1c"]
 
 [sub_resource type="Theme" id="Theme_uoqn6"]
 
@@ -21,6 +22,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_cq5ae")
+metadata/_edit_use_anchors_ = true
 
 [node name="Editor" parent="." instance=ExtResource("1_aw7xw")]
 
@@ -74,7 +76,7 @@ ok_button_text = "Open"
 mode_overrides_title = false
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.ssc ; SSC Chart Files", "*.sm ; SM Chart Files", "*.mp3 ; MP3 Music Files", "*.ogg ; OGG Music Files")
+filters = PackedStringArray("*.ssc ; SSC Chart Files", "*.sm ; SM Chart Files", "*.mp3 ; MP3 Music Files", "*.ogg ; OGG Music Files", "*.ucs;UCS")
 show_hidden_files = true
 
 [node name="MessageDialog" type="AcceptDialog" parent="."]
@@ -89,7 +91,30 @@ script = ExtResource("5_bb8wl")
 title = "About"
 ok_button_text = "Close"
 dialog_text = "Made by Snil"
+dialog_autowrap = true
 script = ExtResource("7_ufk08")
+
+[node name="ExitDialog" type="ConfirmationDialog" parent="."]
+initial_position = 2
+ok_button_text = "Yes"
+dialog_text = "Are you sure you want to exit?"
+cancel_button_text = "No"
+script = ExtResource("8_71i1c")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="SnapText" type="Label" parent="CanvasLayer"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -26.0
+offset_right = 43.0
+grow_vertical = 0
+text = "Snap:"
+horizontal_alignment = 3
+vertical_alignment = 1
 
 [connection signal="file_selected" from="FileDialog1" to="Editor" method="_on_file_dialog_1_file_selected"]
 [connection signal="custom_action" from="AboutDialog" to="AboutDialog" method="_on_custom_action"]
+[connection signal="canceled" from="ExitDialog" to="ExitDialog" method="_on_canceled"]
+[connection signal="confirmed" from="ExitDialog" to="ExitDialog" method="_on_confirmed"]

@@ -11,8 +11,10 @@ func _ready():
 # func _process(delta):
 # 	pass
 
+
 func on_display():
-	popup_centered()
+	popup_centered_ratio(0.4)
+
 
 # func on_github_link():
 # 	OS.shell_open("https://github.com/snil4/StepEditor")

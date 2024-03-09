@@ -1,6 +1,6 @@
 extends Control
 
-var playing = false
+@onready var rect_node = get_node("MenuBar/ColorRect")
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	change_window()
@@ -9,9 +9,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	if Input.is_action_pressed("play"):
-		playing = true
+	pass
 
 func change_window():
 	size = get_window().get_size_with_decorations()
-	$MenuBar/ColorRect.set_size(Vector2(size.x, 41.0))
+	rect_node.set_size(Vector2(size.x, 41.0))

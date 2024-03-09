@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://bay1cg8pnk57w"]
+
+[ext_resource type="Script" path="res://Scripts/MeasureLine.gd" id="1_n6l4a"]
+
+[node name="MeasureLine" type="Node2D"]
+script = ExtResource("1_n6l4a")
+
+[node name="Measure" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0, 50, 2.08165e-12)
+width = 3.0
+
+[node name="Label" type="Label" parent="."]
+offset_left = 50.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 14.0
+text = "1"
