@@ -4,7 +4,9 @@ var cur_bpm: float
 var cur_div: int
 var cur_mode: int
 var next_y: int
+# Measure line scene for creating new measure line nodes
 const measure_scene = preload("res://Scenes/MeasureLine.tscn")
+# Note scene for creating new note nodes
 var note_scene = preload("res://Scenes/Note.tscn")
 
 @onready var notes_collection_node = $NotesCollection
@@ -36,6 +38,9 @@ func draw_measure(measure: int, beat: float):
 	measure_node.new_measure(-150, 150,measure, width)
 
 func add_note_node(num: int, measure: int, beat: float):
+	if num > cur_mode:
+		return
+
 	var note_node = note_scene.instantiate()
 	note_node.set_name("note" + str(num) + "_" + str(measure) + "_" + str(beat))
 	note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))

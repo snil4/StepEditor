@@ -1,6 +1,7 @@
 extends Node2D
 
-# size and position variables
+## Size and position variables
+# Notes scale
 var note_size
 var note_height
 var note_scale = Vector2(1.0,1.0)
@@ -11,18 +12,29 @@ const height_scale = 40.0
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
 
-# File managment variables
+## File managment variables
+# Song properties
 var properties = {}
+# Path for the music file
 var music_path
+# Path for the charts file
 var file_path
+# Name of the charts file
 var file_name
+
+## Current chart properties
+# Playing status
 var is_playing = false
+# Current location inside the measure
 var cur_beat = 1.0
+# Current location by measure
 var cur_measure = 1
+# Current BPM
 var cur_bpm = 100.0
+# Current measure division
 var div = 4
+# Current snap value
 var snap: int = 0
-var note_scene = load("res://Scenes/Note.tscn")
 
 # Nodes
 @onready var area2d_node = $Area2D
