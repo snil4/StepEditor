@@ -19,7 +19,7 @@ offset_bottom = 1024.0
 color = Color(0, 0, 0, 1)
 
 [node name="Area2D" type="Area2D" parent="."]
-position = Vector2(567, 95)
+position = Vector2(567, 100)
 
 [node name="WaveSpectrum" type="Node2D" parent="Area2D"]
 position = Vector2(-567, -95)

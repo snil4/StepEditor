@@ -1,8 +1,7 @@
 extends Node2D
 
 ## Size and position variables
-# Notes scale
-var note_size
+var window_size
 var note_height
 var note_scale = Vector2(1.0,1.0)
 var chart_type: int = 4
@@ -11,6 +10,7 @@ const initial_height = 50.0
 const height_scale = 40.0
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
+const area2d_x_div = 2
 
 ## File managment variables
 # Song properties
@@ -70,22 +70,22 @@ func _process(delta):
 
 # Called every frame the window size is changed
 func change_window():
-	note_size = get_window().get_size_with_decorations()
-	background_node.set_size(note_size)
+	window_size = get_window().get_size_with_decorations()
+	background_node.set_size(window_size)
 	area2d_node.scale = note_scale
 	
-	left_line_node.points[1].y = note_size.y
-	right_line_node.points[1].y = note_size.y
+	left_line_node.points[1].y = window_size.y
+	right_line_node.points[1].y = window_size.y
 	# Scale the size of the arrows to not be bigger than the screen borders
-	if note_size.x < area2d_node.scale.x * 500:
-		area2d_node.scale.x = note_size.x / 500.0
-		area2d_node.scale.y = note_size.x / 500.0
+	if window_size.x < area2d_node.scale.x * 500:
+		area2d_node.scale.x = window_size.x / 500.0
+		area2d_node.scale.y = window_size.x / 500.0
 
-		left_line_node.points[1].y += note_size.y
-		right_line_node.points[1].y += note_size.y
+		left_line_node.points[1].y += window_size.y
+		right_line_node.points[1].y += window_size.y
 	# Scale the height of the receptors to compensate for the arrows's size
 	note_height = area2d_node.scale.x * height_scale + initial_height
-	area2d_node.position = Vector2(note_size.x / 3, note_height)
+	area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
 
 		
 
@@ -129,43 +129,43 @@ func _unhandled_input(event):
 			snap += 1
 
 		# Add Note 1
-		elif Input.is_action_just_pressed("Insert_1"):
+		elif Input.is_action_just_pressed("Insert_1") && chart_type >= 1:
 			add_note(1);
 
 		# Add Note 2
-		elif Input.is_action_just_pressed("Insert_2"):
+		elif Input.is_action_just_pressed("Insert_2") && chart_type >= 2:
 			add_note(2);
 
 		# Add Note 3
-		elif Input.is_action_just_pressed("Insert_3"):
+		elif Input.is_action_just_pressed("Insert_3") && chart_type >= 3:
 			add_note(3);
 
 		# Add Note 4
-		elif Input.is_action_just_pressed("Insert_4"):
+		elif Input.is_action_just_pressed("Insert_4") && chart_type >= 4:
 			add_note(4);
 
 		# Add Note 5
-		elif Input.is_action_just_pressed("Insert_5"):
+		elif Input.is_action_just_pressed("Insert_5") && chart_type >= 5:
 			add_note(5);
 
 		# Add Note 6
-		elif Input.is_action_just_pressed("Insert_6"):
+		elif Input.is_action_just_pressed("Insert_6") && chart_type >= 6:
 			add_note(6);
 
 		# Add Note 7
-		elif Input.is_action_just_pressed("Insert_7"):
+		elif Input.is_action_just_pressed("Insert_7") && chart_type >= 7:
 			add_note(7);
 
 		# Add Note 8
-		elif Input.is_action_just_pressed("Insert_8"):
+		elif Input.is_action_just_pressed("Insert_8") && chart_type >= 8:
 			add_note(8);
 
 		# Add Note 9
-		elif Input.is_action_just_pressed("Insert_9"):
+		elif Input.is_action_just_pressed("Insert_9") && chart_type >= 9:
 			add_note(9);
 
 		# Add Note 3
-		elif Input.is_action_just_pressed("Insert_10"):
+		elif Input.is_action_just_pressed("Insert_10") && chart_type >= 10:
 			add_note(10);
 
 		snap = clamp(snap, 0, snap_options.size() - 1)
@@ -173,7 +173,7 @@ func _unhandled_input(event):
 		cubes_node.change_color(snap)
 		area2d_node.scale = note_scale
 		note_height = area2d_node.scale.x * height_scale + initial_height
-		area2d_node.position = Vector2(note_size.x / 3, note_height)
+		area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
 		measure_fix()
 		print("measure: " + String.num_int64(cur_measure))
 		print("beat: " + String.num(cur_beat))
@@ -199,12 +199,14 @@ func _on_file_dialog_1_file_selected(path):
 	else:
 		message_node.on_error_message("Can't open this file type")
 
+#
 func draw_measures():
 	measure_container_node.change_props(cur_bpm,div,chart_type)
 	for i in 100:
 		for j in div:
 			measure_container_node.draw_measure(i + 1, j + 1)
 
+# Add a new note
 func add_note(num: int):
 	var note_name = "Area2D/MeasureContainer/NotesCollection/note" + str(num) + "_" + str(cur_measure) + "_" + str(cur_beat)
 	var note_node = get_node_or_null(note_name)
@@ -215,6 +217,7 @@ func add_note(num: int):
 		measure_container_node.add_note_node(num,cur_measure,cur_beat)
 		print("note: " + note_name + " added")
 
+# Fix the current measure number based on the current beat
 func measure_fix():
 	if cur_beat < 1.0:
 		cur_beat = div
