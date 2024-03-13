@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://dpncvve46oilr"]
+[gd_scene load_steps=12 format=3 uid="uid://dpncvve46oilr"]
 
 [ext_resource type="PackedScene" uid="uid://dd2nfqupg7qfe" path="res://Scenes/Editor.tscn" id="1_aw7xw"]
 [ext_resource type="Script" path="res://Scripts/FileMenu.gd" id="1_b857c"]
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_cq5ae"]
+[ext_resource type="Script" path="res://Scripts/ViewMenu.gd" id="4_cho6b"]
 [ext_resource type="Script" path="res://Scripts/MessageDialog.gd" id="4_h1xth"]
 [ext_resource type="Script" path="res://Scripts/HelpMenu.gd" id="4_p076m"]
 [ext_resource type="Script" path="res://Scripts/Parser.gd" id="5_bb8wl"]
@@ -10,6 +11,9 @@
 [ext_resource type="Script" path="res://Scripts/ExitDialog.gd" id="8_71i1c"]
 
 [sub_resource type="Theme" id="Theme_uoqn6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vhvjo"]
+size = Vector2(200, 100)
 
 [node name="Main" type="Control"]
 clip_contents = true
@@ -45,27 +49,47 @@ offset_bottom = 41.0
 theme = SubResource("Theme_uoqn6")
 text = "File"
 flat = false
-item_count = 3
+item_count = 4
 popup/item_0/text = "Open"
 popup/item_0/id = 0
 popup/item_1/text = "Open recent"
 popup/item_1/id = 1
-popup/item_2/text = "Exit"
-popup/item_2/id = 2
+popup/item_2/text = ""
+popup/item_2/id = 999
+popup/item_2/separator = true
+popup/item_3/text = "Exit"
+popup/item_3/id = 2
 script = ExtResource("1_b857c")
 
-[node name="HelpMenu" type="MenuButton" parent="MenuBar"]
+[node name="ViewMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
 offset_left = 111.0
 offset_right = 222.0
 offset_bottom = 41.0
+text = "View
+"
+flat = false
+item_count = 1
+popup/item_0/text = "Touch Mode"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+script = ExtResource("4_cho6b")
+
+[node name="HelpMenu" type="MenuButton" parent="MenuBar"]
+layout_mode = 0
+offset_left = 222.0
+offset_right = 333.0
+offset_bottom = 41.0
 text = "Help"
 flat = false
-item_count = 2
+item_count = 3
 popup/item_0/text = "Instructions"
 popup/item_0/id = 0
-popup/item_1/text = "About"
-popup/item_1/id = 1
+popup/item_1/text = ""
+popup/item_1/id = 999
+popup/item_1/separator = true
+popup/item_2/text = "About"
+popup/item_2/id = 1
 script = ExtResource("4_p076m")
 
 [node name="FileDialog1" type="FileDialog" parent="."]
@@ -113,6 +137,20 @@ grow_vertical = 0
 text = "Snap:"
 horizontal_alignment = 3
 vertical_alignment = 1
+
+[node name="TouchButtons" type="Node2D" parent="."]
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="TouchButtons"]
+position = Vector2(100, 970)
+shape = SubResource("RectangleShape2D_vhvjo")
+
+[node name="Button" type="Button" parent="TouchButtons/TouchScreenButton"]
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = 50.0
+action_mode = 0
+keep_pressed_outside = true
 
 [connection signal="file_selected" from="FileDialog1" to="Editor" method="_on_file_dialog_1_file_selected"]
 [connection signal="custom_action" from="AboutDialog" to="AboutDialog" method="_on_custom_action"]
