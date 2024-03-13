@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Editor.gd" id="1_irovr"]
 [ext_resource type="Script" path="res://Scripts/MeasureContainer.gd" id="2_e8bcc"]
 [ext_resource type="Script" path="res://Scripts/Cubes.gd" id="3_3kega"]
-[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Assets/Noteskins/Metal/normal.png" id="4_d68ky"]
+[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Sprites/metal_normal.png" id="4_d68ky"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_j1who"]
 a = Vector2(-200, 2.08165e-12)

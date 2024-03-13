@@ -1,15 +1,21 @@
 extends Node2D
 
 ## Size and position variables
+# Current window size
 var window_size
 var note_height
 var note_scale = Vector2(1.0,1.0)
+# Current chart type
 var chart_type: int = 4
-const note_speed = 1
+# Current scroll speed
+@export var note_speed = 1
 const initial_height = 50.0
 const height_scale = 40.0
+# Numeric values of the snap options
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
+# Names of the snap options
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
+# The divider for the initial position of the area2d node on the screen
 const area2d_x_div = 2
 
 ## File managment variables
@@ -87,11 +93,10 @@ func change_window():
 	note_height = area2d_node.scale.x * height_scale + initial_height
 	area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
 
-		
 
 # Called on every key input
-func _unhandled_input(event):
-	if event is InputEventKey:
+func _input(event):
+	if event is InputEventKey or event is InputEventScreenTouch:
 		# Zoom In
 		if event.is_action_pressed("Zoom-In") and note_scale.x < 3.0:
 			note_scale.x += 0.20
@@ -228,6 +233,3 @@ func measure_fix():
 	if cur_measure < 1:
 		cur_beat = 1.0
 		cur_measure = 1
-
-
-
