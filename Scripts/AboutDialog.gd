@@ -12,6 +12,7 @@ func _ready():
 # func _process(delta):
 # 	pass
 
+
 # Whenever the popup shows up center the popup on the window
 func on_display():
 	popup_centered_ratio(0.4)
@@ -19,6 +20,7 @@ func on_display():
 
 # func on_github_link():
 # 	OS.shell_open("https://github.com/snil4/StepEditor")
+
 
 # Function for on-screen buttons
 func _on_custom_action(action):

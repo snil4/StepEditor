@@ -12,6 +12,7 @@ var note_scene = preload("res://Scenes/Note.tscn")
 @onready var notes_collection_node = $NotesCollection
 @onready var editor = $"root/Main/Editor"
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -21,10 +22,12 @@ func _ready():
 # func _process(delta):
 # 	pass
 
+
 func change_props(bpm: float, div: int, mode: int):
 	cur_bpm = bpm
 	cur_div = div
 	cur_mode = mode
+
 
 func draw_measure(measure: int, beat: float):
 	var measure_node = measure_scene.instantiate()
@@ -37,12 +40,13 @@ func draw_measure(measure: int, beat: float):
 		measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (cur_bpm)
 	measure_node.new_measure(-150, 150,measure, width)
 
+
 func add_note_node(num: int, measure: int, beat: float):
 	if num > cur_mode:
 		return
 
 	var note_node = note_scene.instantiate()
-	note_node.set_name("note" + str(num) + "_" + str(measure) + "_" + str(beat))
+	note_node.set_name(("note" + str(num) + "_" + str(measure) + "_" + str(beat)).replace(".","-"))
 	note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))
 	var animation_node = note_node.get_node("AnimatedSprite2D")
 	match cur_mode:

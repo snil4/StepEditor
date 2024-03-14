@@ -7,16 +7,24 @@ var note_height
 var note_scale = Vector2(1.0,1.0)
 # Current chart type
 var chart_type: int = 4
+# Current chart type
+var initial: bool = true
+# Current chart type
+var last_window_x
 # Current scroll speed
 @export var note_speed = 1
-const initial_height = 50.0
-const height_scale = 40.0
-# Numeric values of the snap options
-const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
-# Names of the snap options
-const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
+# Initial receptor height
+@export var initial_height = 80.0
 # The divider for the initial position of the area2d node on the screen
-const area2d_x_div = 2
+@export var area2d_x_div = 2
+@export var min_note_scale = 0.4
+@export var max_note_scale = 3.0
+# Scaling for the height of the receptor
+const height_scale = 40.0
+# Numeric values of the cur_snap options
+const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
+# Names of the cur_snap options
+const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
 
 ## File managment variables
 # Song properties
@@ -38,9 +46,9 @@ var cur_measure = 1
 # Current BPM
 var cur_bpm = 100.0
 # Current measure division
-var div = 4
+var cur_div = 4
 # Current snap value
-var snap: int = 0
+var cur_snap: int = 0
 
 # Nodes
 @onready var area2d_node = $Area2D
@@ -58,11 +66,12 @@ var snap: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	last_window_x = get_window().get_size_with_decorations().x
 	set_process_input(true)
-	change_window()
 	left_line_node.points[1].y = get_window().get_size_with_decorations().y
 	right_line_node.points[1].y = get_window().get_size_with_decorations().y
 	get_tree().get_root().size_changed.connect(Callable(self, "change_window"))
+	get_viewport().files_dropped.connect(Callable(self, "_on_files_drop"))
 	draw_measures()
 	
 
@@ -89,24 +98,37 @@ func change_window():
 
 		left_line_node.points[1].y += window_size.y
 		right_line_node.points[1].y += window_size.y
+
 	# Scale the height of the receptors to compensate for the arrows's size
 	note_height = area2d_node.scale.x * height_scale + initial_height
-	area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
+
+	if initial:
+		area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
+	else:
+		area2d_node.position.x += (window_size.x - last_window_x) / 4
+
+	last_window_x = window_size.x
 
 
 # Called on every key input
 func _input(event):
+	if (event is InputEventMouseMotion and event.is_action_pressed("ui_select")) \
+		or event is InputEventScreenDrag:
+		area2d_node.position += event.relative
+
+
 	if event is InputEventKey or event is InputEventScreenTouch:
 		# Zoom In
-		if event.is_action_pressed("Zoom-In") and note_scale.x < 3.0:
-			note_scale.x += 0.20
-			note_scale.y += 0.20
-			# print("Zoom")
+		if event.is_action_pressed("Zoom-In"): 
+			if note_scale.x < max_note_scale:
+				note_scale.x += 0.20
+				note_scale.y += 0.20
 
 		# Zoom Out
-		elif event.is_action_pressed("Zoom-Out") and note_scale.x > 0.4:
-			note_scale.x -= 0.20
-			note_scale.y -= 0.20
+		elif event.is_action_pressed("Zoom-Out"): 
+			if note_scale.x > min_note_scale:
+				note_scale.x -= 0.20
+				note_scale.y -= 0.20
 
 		# Play/Stop
 		elif Input.is_action_pressed("play") and music_path != null:
@@ -115,23 +137,23 @@ func _input(event):
 
 		# Scroll Down
 		elif Input.is_action_pressed("Scroll-Down") and not(is_playing):
-			cur_beat += snap_options[snap]
-			while fmod(cur_beat, snap_options[snap]) != 0:
+			cur_beat += snap_options[cur_snap]
+			while fmod(cur_beat, snap_options[cur_snap]) != 0:
 				cur_beat -= 0.015625
 
 		# Scroll Up
 		elif Input.is_action_pressed("Scroll-Up") and not(is_playing):
-			cur_beat -= snap_options[snap]
-			while fmod(cur_beat, snap_options[snap]) != 0:
+			cur_beat -= snap_options[cur_snap]
+			while fmod(cur_beat, snap_options[cur_snap]) != 0:
 				cur_beat += 0.015625
 
 		# Snap Down
 		elif Input.is_action_just_pressed("Snap_Down"):
-			snap -= 1
+			cur_snap -= 1
 		
 		# Snap Up
 		elif Input.is_action_just_pressed("Snap_Up"):
-			snap += 1
+			cur_snap += 1
 
 		# Add Note 1
 		elif Input.is_action_just_pressed("Insert_1") && chart_type >= 1:
@@ -173,21 +195,35 @@ func _input(event):
 		elif Input.is_action_just_pressed("Insert_10") && chart_type >= 10:
 			add_note(10);
 
-		snap = clamp(snap, 0, snap_options.size() - 1)
-		snap_node.set_text("Snap: " + snap_names[snap])
-		cubes_node.change_color(snap)
-		area2d_node.scale = note_scale
+
+		cur_snap = clamp(cur_snap, 0, snap_options.size() - 1)
+		snap_node.set_text("Snap: " + snap_names[cur_snap])
+		cubes_node.change_color(cur_snap)
 		note_height = area2d_node.scale.x * height_scale + initial_height
-		area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
+		# area2d_node.scale = note_scale
+		#area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
 		measure_fix()
-		print("measure: " + String.num_int64(cur_measure))
-		print("beat: " + String.num(cur_beat))
-		print("snap: " + String.num_int64(snap))
+
+		if OS.is_debug_build():
+			print("measure: " + String.num_int64(cur_measure))
+			print("beat: " + String.num(cur_beat))
+			print("cur_snap: " + String.num_int64(cur_snap))
+
+
+# Called on dropping files to the editor
+func _on_files_drop(files):
+	_on_file_dialog_1_file_selected(files[0])
 
 
 # Called on file selection
 func _on_file_dialog_1_file_selected(path):
+
 	file_dialog_node.hide()
+	for i in notes_collection_node.get_children():
+		notes_collection_node.remove_child(i)
+		i.queue_free()
+
+
 	properties["folder"] = file_dialog_node.current_dir
 	# print(properties["folder"])
 	file_name = file_dialog_node.current_file
@@ -204,19 +240,24 @@ func _on_file_dialog_1_file_selected(path):
 	else:
 		message_node.on_error_message("Can't open this file type")
 
-#
+
+# Draw all the measures in the scene
 func draw_measures():
-	measure_container_node.change_props(cur_bpm,div,chart_type)
+	measure_container_node.change_props(cur_bpm,cur_div,chart_type)
 	for i in 100:
-		for j in div:
+		for j in cur_div:
 			measure_container_node.draw_measure(i + 1, j + 1)
+
 
 # Add a new note
 func add_note(num: int):
-	var note_name = "Area2D/MeasureContainer/NotesCollection/note" + str(num) + "_" + str(cur_measure) + "_" + str(cur_beat)
+	var note_name = ("Area2D/MeasureContainer/NotesCollection/note" \
+	 	+ str(num) + "_" + str(cur_measure) + "_" + str(cur_beat)).replace(".","-")
 	var note_node = get_node_or_null(note_name)
+
 	if note_node != null:
-		remove_child(note_node)
+		notes_collection_node.remove_child(note_node)
+		note_node.queue_free()
 		print("note: " + note_name + " removed")
 	else:
 		measure_container_node.add_note_node(num,cur_measure,cur_beat)
@@ -225,10 +266,10 @@ func add_note(num: int):
 # Fix the current measure number based on the current beat
 func measure_fix():
 	if cur_beat < 1.0:
-		cur_beat = div
+		cur_beat = cur_div
 		cur_measure -= 1
-	elif cur_beat >= div + 1:
-		cur_beat = 1.0
+	elif cur_beat >= cur_div + 1:
+		cur_beat = 1.0  + (cur_beat - cur_div)
 		cur_measure += 1
 	if cur_measure < 1:
 		cur_beat = 1.0
