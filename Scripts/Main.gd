@@ -11,6 +11,10 @@ func _ready():
 		editor_node.initial_height *= DisplayServer.screen_get_dpi() / (120.0 * 3)
 		editor_node.area2d_x_div = DisplayServer.screen_get_dpi() / 60.0
 		get_tree().root.get_window().size *= DisplayServer.screen_get_dpi() / 120.0
+		get_tree().root.get_window().position = Vector2(DisplayServer.screen_get_size().x / 
+														(DisplayServer.screen_get_dpi() / 50.0),
+														DisplayServer.screen_get_size().y / 
+														(DisplayServer.screen_get_dpi() / 50.0))
 
 	get_tree().get_root().size_changed.connect(Callable(self, "change_window"))
 	change_window()
