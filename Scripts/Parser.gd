@@ -76,6 +76,7 @@ func parse_ucs(original_properties: Dictionary):
 	properties = original_properties
 	# Set global file path for the chart
 	file_path = properties["folder"] + "/" + properties["chart"]
+	print(file_path)
 	file = FileAccess.open(file_path, FileAccess.READ)
 
 	# Main loop

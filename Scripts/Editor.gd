@@ -25,6 +25,8 @@ const height_scale = 40.0
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
 # Names of the cur_snap options
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
+const music_file_types = [".ogg",".mp3"]
+const chart_file_types = [".sm",".ssc",".ucs"]
 
 ## File managment variables
 # Song properties
@@ -212,28 +214,39 @@ func _input(event):
 
 # Called on dropping files to the editor
 func _on_files_drop(files):
-	_on_file_dialog_1_file_selected(files[0])
+	var split = files[0].rsplit("/",false,1)
+	print(split)
+
+	file_name = split[1]
+	properties["folder"] = split[0]
+
+	load_file()
 
 
 # Called on file selection
-func _on_file_dialog_1_file_selected(path):
-
+func _on_file_dialog_1_file_selected(_path):
 	file_dialog_node.hide()
+
 	for i in notes_collection_node.get_children():
 		notes_collection_node.remove_child(i)
 		i.queue_free()
-
 
 	properties["folder"] = file_dialog_node.current_dir
 	# print(properties["folder"])
 	file_name = file_dialog_node.current_file
 	# print(folder_path)
 
-	if path.ends_with(".mp3") or path.ends_with(".ogg"):
+	load_file()
+
+
+func load_file():
+	var split = file_name.split(".",false,1)
+
+	if music_file_types.has(split[0]):
 		properties["music"] = file_name
 		parser_node.load_music(properties)
 
-	elif path.ends_with(".sm") or path.ends_with(".ssc") or path.ends_with(".ucs"):
+	elif chart_file_types.has(split[0]):
 		properties["chart"] = file_name
 		parser_node.load_chart(properties)
 		
