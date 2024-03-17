@@ -22,24 +22,31 @@ var cur_div: int
 
 
 func load_music(original_properties: Dictionary) -> Dictionary:
+
 	properties = original_properties
 	file_path = properties["folder"] + "/" + properties["music"]
+
 	if properties["music"].ends_with(".ogg"):
 		properties["Title"] = properties["music"].trim_suffix(".ogg")
+
 	elif properties["music"].ends_with(".mp3"):
 		properties["Title"] = properties["music"].trim_suffix(".mp3")
+
 	return properties
 
 
 func load_chart(original_properties: Dictionary) -> Dictionary:
 	properties = original_properties
 	file_path = properties["folder"] + "/" + properties["chart"]
+
 	file = FileAccess.open(file_path, FileAccess.READ)
 	if properties["chart"].ends_with(".ucs"):
 		properties["type"] = "ucs"
 		parse_ucs(original_properties);
+
 	else:
 		properties["type"] = "sm"
+
 		# index = 0
 		while not file.eof_reached(): # iterate through all lines until the end of file is reached
 			line = file.get_line()
@@ -59,6 +66,7 @@ func load_chart(original_properties: Dictionary) -> Dictionary:
 		file.close()
 		print(properties)
 		parse_details()
+
 	return properties
 
 
@@ -67,13 +75,16 @@ func parse_details() -> bool:
 
 
 func parse_ucs(original_properties: Dictionary):
+	# Set global properties list
+	properties = original_properties
+
 	# Initialize measure and beat count
 	cur_measure=1
 	cur_beat=1
+
 	# Default single mode for pump
 	cur_mode = 5
-	# Set global properties list
-	properties = original_properties
+	
 	# Set global file path for the chart
 	file_path = properties["folder"] + "/" + properties["chart"]
 	print(file_path)

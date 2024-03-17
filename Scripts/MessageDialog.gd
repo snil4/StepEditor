@@ -14,5 +14,6 @@ func _ready():
 func on_error_message(error: String):
 	title = "Error"
 	set_text(error)
+	
 	popup_centered()
 	

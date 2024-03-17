@@ -28,6 +28,11 @@ const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th"
 const music_file_types = [".ogg",".mp3"]
 const chart_file_types = [".sm",".ssc",".ucs"]
 
+const target4k_path  = "res://Scenes/Target4k"
+const target5k_path  = "res://Scenes/Target5k"
+const target8k_path  = "res://Scenes/Target8k"
+const target10k_path = "res://Scenes/Target10k"
+
 ## File managment variables
 # Song properties
 var properties = {}
@@ -62,37 +67,44 @@ var cur_snap: int = 0
 @onready var right_line_node = $Area2D/LineRight
 @onready var measure_container_node = $Area2D/MeasureContainer
 @onready var cubes_node = $Area2D/Cubes
-@onready var snap_node = $"/root/Main/CanvasLayer/SnapText"
+@onready var snap_node = $CanvasLayer/SnapText
 @onready var notes_collection_node = $Area2D/MeasureContainer/NotesCollection
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	last_window_x = get_window().get_size_with_decorations().x
 	set_process_input(true)
+
+	last_window_x = get_window().get_size_with_decorations().x
 	left_line_node.points[1].y = get_window().get_size_with_decorations().y
 	right_line_node.points[1].y = get_window().get_size_with_decorations().y
+
 	get_tree().get_root().size_changed.connect(Callable(self, "change_window"))
 	get_viewport().files_dropped.connect(Callable(self, "_on_files_drop"))
+	
 	draw_measures()
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+
 	if is_playing:
 		cur_beat += ((cur_bpm * 32.0) / 60.0) * delta
 		measure_fix()
+
 	measure_container_node.position.y = -((((cur_measure - 1) * 4) + cur_beat - 1) * (cur_bpm))
 
 
 # Called every frame the window size is changed
 func change_window():
+
 	window_size = get_window().get_size_with_decorations()
 	background_node.set_size(window_size)
 	area2d_node.scale = note_scale
 	
 	left_line_node.points[1].y = window_size.y
 	right_line_node.points[1].y = window_size.y
+
 	# Scale the size of the arrows to not be bigger than the screen borders
 	if window_size.x < area2d_node.scale.x * 500:
 		area2d_node.scale.x = window_size.x / 500.0
@@ -106,6 +118,7 @@ func change_window():
 
 	if initial:
 		area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
+
 	else:
 		area2d_node.position.x += (window_size.x - last_window_x) / 4
 
@@ -114,6 +127,7 @@ func change_window():
 
 # Called on every key input
 func _input(event):
+
 	if (event is InputEventMouseMotion and event.is_action_pressed("ui_select")) \
 		or event is InputEventScreenDrag:
 		area2d_node.position += event.relative
@@ -256,7 +270,8 @@ func load_file():
 
 # Draw all the measures in the scene
 func draw_measures():
-	measure_container_node.change_props(cur_bpm,cur_div,chart_type)
+	measure_container_node.change_props(cur_bpm,cur_div)
+
 	for i in 100:
 		for j in cur_div:
 			measure_container_node.draw_measure(i + 1, j + 1)
@@ -264,6 +279,7 @@ func draw_measures():
 
 # Add a new note
 func add_note(num: int):
+
 	var note_name = ("Area2D/MeasureContainer/NotesCollection/note" \
 	 	+ str(num) + "_" + str(cur_measure) + "_" + str(cur_beat)).replace(".","-")
 	var note_node = get_node_or_null(note_name)
@@ -278,12 +294,39 @@ func add_note(num: int):
 
 # Fix the current measure number based on the current beat
 func measure_fix():
+
 	if cur_beat < 1.0:
 		cur_beat = cur_div
 		cur_measure -= 1
+
 	elif cur_beat >= cur_div + 1:
 		cur_beat = 1.0  + (cur_beat - cur_div)
 		cur_measure += 1
+
 	if cur_measure < 1:
 		cur_beat = 1.0
 		cur_measure = 1
+
+
+func change_mode(mode: int):
+	chart_type = mode
+	measure_container_node.change_mode(mode)
+
+	var target_node = $Area2D/Target
+	area2d_node.remove_child(target_node)
+	target_node.queue_free()
+
+	match chart_type:
+		4:
+			target_node = load(target4k_path).instance()
+
+		5:
+			target_node = load(target5k_path).instance()
+
+		8:
+			target_node = load(target8k_path).instance()
+
+		10:
+			target_node = load(target10k_path).instance()
+
+	area2d_node.add_child(target_node)

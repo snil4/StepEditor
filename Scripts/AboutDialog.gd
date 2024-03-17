@@ -24,6 +24,7 @@ func on_display():
 
 # Function for on-screen buttons
 func _on_custom_action(action):
+
 	# Link to this project's github
 	if action == "github_link":
 		OS.shell_open("https://github.com/snil4/StepEditor")

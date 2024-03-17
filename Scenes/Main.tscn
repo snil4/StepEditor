@@ -75,7 +75,7 @@ offset_right = 576.0
 offset_bottom = 41.0
 color = Color(0.184314, 0.184314, 0.184314, 1)
 
-[node name="FileMenu" type="MenuButton" parent="MenuBar"]
+[node name="FileMenu" type="MenuButton" parent="MenuBar" groups=["Persist"]]
 layout_mode = 0
 offset_right = 111.0
 offset_bottom = 41.0
@@ -157,19 +157,6 @@ ok_button_text = "Yes"
 dialog_text = "Are you sure you want to exit?"
 cancel_button_text = "No"
 script = ExtResource("8_71i1c")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="SnapText" type="Label" parent="CanvasLayer"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -26.0
-offset_right = 43.0
-grow_vertical = 0
-text = "Snap:"
-horizontal_alignment = 3
-vertical_alignment = 1
 
 [node name="TouchButtons" type="Node2D" parent="."]
 visible = false

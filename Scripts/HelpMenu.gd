@@ -12,8 +12,10 @@ func _ready():
 
 
 func _on_item_pressed(id):
+	
 	match id:
 		0:
 			print("pass")
+
 		1:
 			about_node.on_display()

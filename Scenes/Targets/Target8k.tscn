@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://bsixg2gl53niu"]
+
+[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Sprites/metal_normal.png" id="1_smcsh"]
+
+[node name="Target" type="Node2D"]
+position = Vector2(2.08165e-12, -2)
+
+[node name="Left" type="Sprite2D" parent="."]
+position = Vector2(-100, 0)
+rotation = 1.5708
+texture = ExtResource("1_smcsh")
+
+[node name="Down" type="Sprite2D" parent="."]
+position = Vector2(-35, 0)
+texture = ExtResource("1_smcsh")
+
+[node name="Up" type="Sprite2D" parent="."]
+position = Vector2(30, 0)
+rotation = 3.14159
+texture = ExtResource("1_smcsh")
+
+[node name="Right" type="Sprite2D" parent="."]
+position = Vector2(95, 0)
+rotation = -1.5708
+texture = ExtResource("1_smcsh")
