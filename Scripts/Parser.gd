@@ -12,8 +12,10 @@ var cur_measure: int
 var cur_beat: float
 var cur_split: float
 var cur_div: int
+var cur_bpm: float
 
-@onready var measure_container_node = $Area2D/MeasureContainer
+@onready var measure_container_node = $"/root/Main/Editor/Area2D/MeasureContainer"
+@onready var editor_node = $"/root/Main/Editor"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -39,14 +41,14 @@ func load_chart(original_properties: Dictionary) -> Dictionary:
 	properties = original_properties
 	file_path = properties["folder"] + "/" + properties["chart"]
 
-	file = FileAccess.open(file_path, FileAccess.READ)
 	if properties["chart"].ends_with(".ucs"):
 		properties["type"] = "ucs"
 		parse_ucs(original_properties);
 
 	else:
 		properties["type"] = "sm"
-
+		
+		file = FileAccess.open(file_path, FileAccess.READ)
 		# index = 0
 		while not file.eof_reached(): # iterate through all lines until the end of file is reached
 			line = file.get_line()
@@ -80,10 +82,11 @@ func parse_ucs(original_properties: Dictionary):
 
 	# Initialize measure and beat count
 	cur_measure=1
-	cur_beat=1
+	cur_beat=1.0
 
 	# Default single mode for pump
 	cur_mode = 5
+	editor_node.change_mode(5)
 	
 	# Set global file path for the chart
 	file_path = properties["folder"] + "/" + properties["chart"]
@@ -97,17 +100,37 @@ func parse_ucs(original_properties: Dictionary):
 		# Header
 		if line.begins_with(":"):
 			cur_property = line.split("=",true,1)
-			properties[cur_property[0].to_lower()] = cur_property[1]
-
+			properties[cur_property[0].lstrip(":").to_lower()] = cur_property[1]
+			
+			match cur_property[0].lstrip(":").to_lower():
+				
+				"bpm":
+					cur_bpm=float(cur_property[1])
+					editor_node.set_bpm(float(cur_property[1]))
+					
+				"beat":
+					editor_node.set_div(int(cur_property[1]))
+					cur_div=int(cur_property[1])
+					
+				"split":
+					cur_split=int(cur_property[1])
+					
+				"mode":
+					if cur_property[1].to_lower() == "double":
+						cur_mode = 10
+						editor_node.change_mode(10)
+			
 		# Chart
-		else:
+		elif line.length() > 0:
 			var line_buffer = line.to_ascii_buffer()
 
-			for i in cur_mode:
-				if line_buffer[i] == "X":
-					measure_container_node.add_note_node(i,cur_measure,cur_beat)
+			if line_buffer.size() > 0:
+				for i in cur_mode:
+					
+					if line_buffer[i] == 88:
+						measure_container_node.add_note_node(i,cur_measure,cur_beat)
 
-			cur_beat += 1.0 / cur_split
+			cur_beat += 1.0 / float(cur_split)
 			measure_fix()
 
 

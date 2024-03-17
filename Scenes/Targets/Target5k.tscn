@@ -5,21 +5,25 @@
 [node name="Target" type="Node2D"]
 position = Vector2(2.08165e-12, -2)
 
-[node name="Left" type="Sprite2D" parent="."]
-position = Vector2(-100, 0)
+[node name="DownLeft" type="Sprite2D" parent="."]
+position = Vector2(-130, 0)
 rotation = 1.5708
 texture = ExtResource("1_xov5b")
 
-[node name="Down" type="Sprite2D" parent="."]
-position = Vector2(-35, 0)
+[node name="UpLeft" type="Sprite2D" parent="."]
+position = Vector2(-65, 0)
 texture = ExtResource("1_xov5b")
 
-[node name="Up" type="Sprite2D" parent="."]
-position = Vector2(30, 0)
+[node name="Center" type="Sprite2D" parent="."]
 rotation = 3.14159
 texture = ExtResource("1_xov5b")
 
-[node name="Right" type="Sprite2D" parent="."]
-position = Vector2(95, 0)
+[node name="UpRight" type="Sprite2D" parent="."]
+position = Vector2(65, 0)
+rotation = -1.5708
+texture = ExtResource("1_xov5b")
+
+[node name="DownRight" type="Sprite2D" parent="."]
+position = Vector2(130, 0)
 rotation = -1.5708
 texture = ExtResource("1_xov5b")

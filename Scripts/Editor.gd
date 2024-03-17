@@ -25,13 +25,13 @@ const height_scale = 40.0
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
 # Names of the cur_snap options
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
-const music_file_types = [".ogg",".mp3"]
-const chart_file_types = [".sm",".ssc",".ucs"]
+const music_file_types = ["ogg","mp3"]
+const chart_file_types = ["sm","ssc","ucs"]
 
-const target4k_path  = "res://Scenes/Target4k"
-const target5k_path  = "res://Scenes/Target5k"
-const target8k_path  = "res://Scenes/Target8k"
-const target10k_path = "res://Scenes/Target10k"
+const target4k_path  = "res://Scenes/Targets/Target4k.tscn"
+const target5k_path  = "res://Scenes/Targets/Target5k.tscn"
+const target8k_path  = "res://Scenes/Targets/Target8k.tscn"
+const target10k_path = "res://Scenes/Targets/Target10k.tscn"
 
 ## File managment variables
 # Song properties
@@ -256,11 +256,11 @@ func _on_file_dialog_1_file_selected(_path):
 func load_file():
 	var split = file_name.split(".",false,1)
 
-	if music_file_types.has(split[0]):
+	if music_file_types.has(split[1]):
 		properties["music"] = file_name
 		parser_node.load_music(properties)
 
-	elif chart_file_types.has(split[0]):
+	elif chart_file_types.has(split[1]):
 		properties["chart"] = file_name
 		parser_node.load_chart(properties)
 		
@@ -318,15 +318,25 @@ func change_mode(mode: int):
 
 	match chart_type:
 		4:
-			target_node = load(target4k_path).instance()
+			target_node = load(target4k_path).instantiate()
 
 		5:
-			target_node = load(target5k_path).instance()
+			target_node = load(target5k_path).instantiate()
 
 		8:
-			target_node = load(target8k_path).instance()
+			target_node = load(target8k_path).instantiate()
 
 		10:
-			target_node = load(target10k_path).instance()
+			target_node = load(target10k_path).instantiate()
 
 	area2d_node.add_child(target_node)
+
+
+func set_bpm(bpm: float):
+	cur_bpm=bpm
+	measure_container_node.change_props(bpm,cur_div)
+
+
+func set_div(div: int):
+	cur_div=div
+	measure_container_node.change_props(cur_bpm,div)
