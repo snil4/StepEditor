@@ -1,13 +1,8 @@
 extends Node2D
 
 ## Size and position variables
-<<<<<<< Updated upstream
 # Current window size
 var window_size
-=======
-# Notes scale
-var note_size
->>>>>>> Stashed changes
 var note_height
 var note_scale = Vector2(1.0,1.0)
 # Current chart type
@@ -30,7 +25,6 @@ const height_scale = 40.0
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
 # Names of the cur_snap options
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
-<<<<<<< Updated upstream
 const music_file_types = ["ogg","mp3"]
 const chart_file_types = ["sm","ssc","ucs"]
 
@@ -38,8 +32,6 @@ const target4k_path  = "res://Scenes/Targets/Target4k.tscn"
 const target5k_path  = "res://Scenes/Targets/Target5k.tscn"
 const target8k_path  = "res://Scenes/Targets/Target8k.tscn"
 const target10k_path = "res://Scenes/Targets/Target10k.tscn"
-=======
->>>>>>> Stashed changes
 
 ## File managment variables
 # Song properties
@@ -105,7 +97,6 @@ func _process(delta):
 
 # Called every frame the window size is changed
 func change_window():
-<<<<<<< Updated upstream
 
 	window_size = get_window().get_size_with_decorations()
 	background_node.set_size(window_size)
@@ -114,32 +105,16 @@ func change_window():
 	left_line_node.points[1].y = window_size.y
 	right_line_node.points[1].y = window_size.y
 
-=======
-	note_size = get_window().get_size_with_decorations()
-	background_node.set_size(note_size)
-	area2d_node.scale = note_scale
-	
-	left_line_node.points[1].y = note_size.y
-	right_line_node.points[1].y = note_size.y
->>>>>>> Stashed changes
 	# Scale the size of the arrows to not be bigger than the screen borders
-	if note_size.x < area2d_node.scale.x * 500:
-		area2d_node.scale.x = note_size.x / 500.0
-		area2d_node.scale.y = note_size.x / 500.0
+	if window_size.x < area2d_node.scale.x * 500:
+		area2d_node.scale.x = window_size.x / 500.0
+		area2d_node.scale.y = window_size.x / 500.0
 
-<<<<<<< Updated upstream
 		left_line_node.points[1].y += window_size.y
 		right_line_node.points[1].y += window_size.y
 
 	# Scale the height of the receptors to compensate for the arrows's size
 	note_height = area2d_node.scale.x * height_scale + initial_height
-=======
-		left_line_node.points[1].y += note_size.y
-		right_line_node.points[1].y += note_size.y
-	# Scale the height of the receptors to compensate for the arrows's size
-	note_height = area2d_node.scale.x * height_scale + initial_height
-	area2d_node.position = Vector2(note_size.x / 3, note_height)
->>>>>>> Stashed changes
 
 	if initial:
 		area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
@@ -241,12 +216,8 @@ func _input(event):
 		snap_node.set_text("Snap: " + snap_names[cur_snap])
 		cubes_node.change_color(cur_snap)
 		note_height = area2d_node.scale.x * height_scale + initial_height
-<<<<<<< Updated upstream
 		# area2d_node.scale = note_scale
 		#area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
-=======
-		area2d_node.position = Vector2(note_size.x / 3, note_height)
->>>>>>> Stashed changes
 		measure_fix()
 
 		if OS.is_debug_build():
@@ -296,11 +267,8 @@ func load_file():
 	else:
 		message_node.on_error_message("Can't open this file type")
 
-<<<<<<< Updated upstream
 
 # Draw all the measures in the scene
-=======
->>>>>>> Stashed changes
 func draw_measures():
 	measure_container_node.change_props(cur_bpm,cur_div)
 
@@ -308,11 +276,8 @@ func draw_measures():
 		for j in cur_div:
 			measure_container_node.draw_measure(i + 1, j + 1)
 
-<<<<<<< Updated upstream
 
 # Add a new note
-=======
->>>>>>> Stashed changes
 func add_note(num: int):
 
 	var note_name = ("Area2D/MeasureContainer/NotesCollection/note" \
@@ -341,7 +306,6 @@ func measure_fix():
 		cur_beat = 1.0
 		cur_measure = 1
 
-<<<<<<< Updated upstream
 
 func change_mode(mode: int):
 	chart_type = mode
@@ -375,5 +339,3 @@ func set_bpm(bpm: float):
 func set_div(div: int):
 	cur_div=div
 	measure_container_node.change_props(cur_bpm,div)
-=======
->>>>>>> Stashed changes
