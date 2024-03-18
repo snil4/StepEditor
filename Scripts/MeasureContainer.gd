@@ -57,13 +57,13 @@ func add_note_node(num: int, measure: int, beat: float):
 	var note_node = note_scene.instantiate()
 	note_node.set_name(("note" + str(num) + "_" + str(measure)
 						 + "_" + str(beat)).replace(".","-"))
-	note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))
 
 	var animation_node = note_node.get_node("AnimatedSprite2D")
 	match cur_mode:
 
 		4:
 			animation_node.set_animation("4k_1")
+			note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))
 
 			match num:
 				1:
@@ -76,9 +76,13 @@ func add_note_node(num: int, measure: int, beat: float):
 					animation_node.set_rotation_degrees(-90)
 
 		5:
-			animation_node.set_animation("5k_" + str(num % 3))
+			note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))
 
 			if num > 3:
 				animation_node.flip_h = true
+				animation_node.set_animation("5k_" + str(num * -1 + 6))
+
+			else:
+				animation_node.set_animation("5k_" + str(num))
 
 	notes_collection_node.add_child(note_node)

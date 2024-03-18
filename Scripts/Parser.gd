@@ -128,7 +128,7 @@ func parse_ucs(original_properties: Dictionary):
 				for i in cur_mode:
 					
 					if line_buffer[i] == 88:
-						measure_container_node.add_note_node(i,cur_measure,cur_beat)
+						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
 
 			cur_beat += 1.0 / float(cur_split)
 			measure_fix()

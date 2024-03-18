@@ -1,29 +1,29 @@
-[gd_scene load_steps=2 format=3 uid="uid://s5nk2uwx8n20"]
+[gd_scene load_steps=4 format=3 uid="uid://s5nk2uwx8n20"]
 
-[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Sprites/metal_normal.png" id="1_xov5b"]
+[ext_resource type="Texture2D" uid="uid://10bp7bg621pv" path="res://Assets/Noteskins/Pump/R1.png" id="1_vtbfv"]
+[ext_resource type="Texture2D" uid="uid://cvad8moxf5r6f" path="res://Assets/Noteskins/Pump/R2.png" id="2_i1xxl"]
+[ext_resource type="Texture2D" uid="uid://cjokr1kg0psn8" path="res://Assets/Noteskins/Pump/R3.png" id="3_50208"]
 
 [node name="Target" type="Node2D"]
-position = Vector2(2.08165e-12, -2)
+position = Vector2(2.08165e-12, 2.08165e-12)
 
 [node name="DownLeft" type="Sprite2D" parent="."]
-position = Vector2(-130, 0)
-rotation = 1.5708
-texture = ExtResource("1_xov5b")
+position = Vector2(-128, 2.08165e-12)
+texture = ExtResource("1_vtbfv")
 
 [node name="UpLeft" type="Sprite2D" parent="."]
-position = Vector2(-65, 0)
-texture = ExtResource("1_xov5b")
+position = Vector2(-64, 2.08165e-12)
+texture = ExtResource("2_i1xxl")
 
 [node name="Center" type="Sprite2D" parent="."]
-rotation = 3.14159
-texture = ExtResource("1_xov5b")
+texture = ExtResource("3_50208")
 
 [node name="UpRight" type="Sprite2D" parent="."]
-position = Vector2(65, 0)
-rotation = -1.5708
-texture = ExtResource("1_xov5b")
+position = Vector2(64, 2.08165e-12)
+rotation = 1.5708
+texture = ExtResource("2_i1xxl")
 
 [node name="DownRight" type="Sprite2D" parent="."]
-position = Vector2(130, 0)
+position = Vector2(128, 2.08165e-12)
 rotation = -1.5708
-texture = ExtResource("1_xov5b")
+texture = ExtResource("1_vtbfv")
