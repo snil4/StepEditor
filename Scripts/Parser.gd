@@ -4,49 +4,50 @@ var file
 # var index: int
 var line: String
 var lines: PackedStringArray = PackedStringArray()
-var properties = {}
 var file_path: String
-var cur_property: PackedStringArray
-var cur_mode: int = 4
+var cur_property = []
+var cur_split: int
 var cur_measure: int
 var cur_beat: float
-var cur_split: float
-var cur_div: int
-var cur_bpm: float
 
 @onready var measure_container_node = $"/root/Main/Editor/Area2D/MeasureContainer"
 @onready var editor_node = $"/root/Main/Editor"
+@onready var main_node = $"/root/Main"
 
+signal mode_changed(mode: int)
+signal bpm_changed(bpm: float)
+signal div_changed(div: int)
 
 # Called when the node enters the scene tree for the first time.
 # func _ready():
 # 	pass
 
 
-func load_music(original_properties: Dictionary) -> Dictionary:
+func load_music():
 
-	properties = original_properties
-	file_path = properties["folder"] + "/" + properties["music"]
+	file_path = main_node.properties["folder"] + "/" + main_node.properties["music"]
 
-	if properties["music"].ends_with(".ogg"):
-		properties["Title"] = properties["music"].trim_suffix(".ogg")
+	if main_node.properties["music"].ends_with(".ogg"):
+		main_node.properties["Title"] = main_node.properties["music"].trim_suffix(".ogg")
 
-	elif properties["music"].ends_with(".mp3"):
-		properties["Title"] = properties["music"].trim_suffix(".mp3")
-
-	return properties
+	elif main_node.properties["music"].ends_with(".mp3"):
+		main_node.properties["Title"] = main_node.properties["music"].trim_suffix(".mp3")
 
 
-func load_chart(original_properties: Dictionary) -> Dictionary:
-	properties = original_properties
-	file_path = properties["folder"] + "/" + properties["chart"]
+func load_chart():
 
-	if properties["chart"].ends_with(".ucs"):
-		properties["type"] = "ucs"
-		parse_ucs(original_properties);
+	cur_measure=1
+	cur_beat=1.0
+
+	file_path = main_node.properties["folder"] + "/" + main_node.properties["chart"]
+
+	if main_node.properties["chart"].ends_with(".ucs"):
+		main_node.properties["type"] = "ucs"
+		parse_ucs();
 
 	else:
-		properties["type"] = "sm"
+		main_node.properties["type"] = "sm"
+		mode_changed.emit(4)
 		
 		file = FileAccess.open(file_path, FileAccess.READ)
 		# index = 0
@@ -59,37 +60,28 @@ func load_chart(original_properties: Dictionary) -> Dictionary:
 			# Header
 			if line.begins_with("#"):
 				cur_property = line.split(":",true,1)
-				properties[cur_property[0].to_lower()] = cur_property[1].replace("; ", "")
+				main_node.properties[cur_property[0].to_lower()] = cur_property[1].replace("; ", "")
 
 			elif line.begins_with("//---------------"):
 				break
 
 			# index += 1
-		file.close()
-		print(properties)
-		parse_details()
 
-	return properties
+	file.close()
+	print(main_node.properties)
+	parse_details()
 
 
 func parse_details() -> bool:
 	return true
 
 
-func parse_ucs(original_properties: Dictionary):
-	# Set global properties list
-	properties = original_properties
-
-	# Initialize measure and beat count
-	cur_measure=1
-	cur_beat=1.0
-
+func parse_ucs():
 	# Default single mode for pump
-	cur_mode = 5
-	editor_node.change_mode(5)
+	mode_changed.emit(5)
 	
 	# Set global file path for the chart
-	file_path = properties["folder"] + "/" + properties["chart"]
+	file_path = main_node.properties["folder"] + "/" + main_node.properties["chart"]
 	print(file_path)
 	file = FileAccess.open(file_path, FileAccess.READ)
 
@@ -100,51 +92,58 @@ func parse_ucs(original_properties: Dictionary):
 		# Header
 		if line.begins_with(":"):
 			cur_property = line.split("=",true,1)
-			properties[cur_property[0].lstrip(":").to_lower()] = cur_property[1]
+			main_node.properties[cur_property[0].lstrip(":").to_lower()] = cur_property[1]
 			
 			match cur_property[0].lstrip(":").to_lower():
 				
 				"bpm":
-					cur_bpm=float(cur_property[1])
-					editor_node.set_bpm(float(cur_property[1]))
+					bpm_changed.emit(float(cur_property[1]))
+					measure_container_node.clear_measures()
+					editor_node.draw_measures()
 					
 				"beat":
-					editor_node.set_div(int(cur_property[1]))
-					cur_div=int(cur_property[1])
+					div_changed.emit(int(cur_property[1]))
+					measure_container_node.clear_measures()
+					editor_node.draw_measures()
 					
 				"split":
 					cur_split=int(cur_property[1])
 					
 				"mode":
 					if cur_property[1].to_lower() == "double":
-						cur_mode = 10
-						editor_node.change_mode(10)
+						main_node.cur_mode = 10
+						mode_changed.emit(10)
 			
 		# Chart
 		elif line.length() > 0:
 			var line_buffer = line.to_ascii_buffer()
 
 			if line_buffer.size() > 0:
-				for i in cur_mode:
+				for i in main_node.cur_mode:
 					
-					if line_buffer[i] == 88:
+					if   line_buffer[i] == 88:
+						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+					elif line_buffer[i] == 77:
+						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+					elif line_buffer[i] == 72:
+						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+					elif line_buffer[i] == 87:
 						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
 
-			cur_beat += 1.0 / float(cur_split)
-			measure_fix()
+				cur_beat += 1.0 / float(cur_split)
+				measure_fix()
 
 
 # Fix the current measure number based on the current beat
 func measure_fix():
 
 	if cur_beat < 1.0:
-		cur_beat = cur_div
+		cur_beat = (main_node.cur_div + 1) - 0.0125
 		cur_measure -= 1
 		
-	elif cur_beat >= cur_div + 1:
-		cur_beat = 1.0 + (cur_beat - cur_div)
+	elif cur_beat >= main_node.cur_div + 1:
+		cur_beat = 1.0
 		cur_measure += 1
-
 
 	if cur_measure < 1:
 		cur_beat = 1.0

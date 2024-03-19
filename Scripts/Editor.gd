@@ -5,14 +5,10 @@ extends Node2D
 var window_size
 var note_height
 var note_scale = Vector2(1.0,1.0)
-# Current chart type
-var chart_type: int = 4
-# Current chart type
+# Is this inisialization?
 var initial: bool = true
-# Current chart type
+# last window size for comparison
 var last_window_x
-# Current scroll speed
-@export var note_speed = 1
 # Initial receptor height
 @export var initial_height = 80.0
 # The divider for the initial position of the area2d node on the screen
@@ -21,8 +17,6 @@ var last_window_x
 @export var max_note_scale = 3.0
 # Scaling for the height of the receptor
 const height_scale = 40.0
-# Numeric values of the cur_snap options
-const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
 # Names of the cur_snap options
 const snap_names = ["Free" ,"4th", "8th", "12th", "16th", "24th", "32nd", "48th", "64th", "92nd", "128th"]
 const music_file_types = ["ogg","mp3"]
@@ -33,32 +27,9 @@ const target5k_path  = "res://Scenes/Targets/Target5k.tscn"
 const target8k_path  = "res://Scenes/Targets/Target8k.tscn"
 const target10k_path = "res://Scenes/Targets/Target10k.tscn"
 
-## File managment variables
-# Song properties
-var properties = {}
-# Path for the music file
-var music_path
-# Path for the charts file
-var file_path
-# Name of the charts file
-var file_name
-
-## Current chart properties
-# Playing status
-var is_playing = false
-# Current location inside the measure
-var cur_beat = 1.0
-# Current location by measure
-var cur_measure = 1
-# Current BPM
-var cur_bpm = 100.0
-# Current measure division
-var cur_div = 4
-# Current snap value
-var cur_snap: int = 0
-
 # Nodes
 @onready var area2d_node = $Area2D
+@onready var main_node = $"/root/Main"
 @onready var background_node = $Background
 @onready var file_dialog_node = $"/root/Main/FileDialog1"
 @onready var parser_node = $"/root/Main/Parser"
@@ -70,6 +41,7 @@ var cur_snap: int = 0
 @onready var snap_node = $CanvasLayer/SnapText
 @onready var notes_collection_node = $Area2D/MeasureContainer/NotesCollection
 
+signal snap_changed(snap :int)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -81,6 +53,7 @@ func _ready():
 
 	get_tree().get_root().size_changed.connect(Callable(self, "change_window"))
 	get_viewport().files_dropped.connect(Callable(self, "_on_files_drop"))
+	parser_node.mode_changed.connect(Callable(self, "set_mode"))
 	
 	draw_measures()
 	
@@ -88,11 +61,10 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 
-	if is_playing:
-		cur_beat += ((cur_bpm * 32.0) / 60.0) * delta
-		measure_fix()
+	if main_node.is_playing:
+		main_node.cur_beat += ((main_node.cur_bpm * 32.0) / 60.0) * delta
 
-	measure_container_node.position.y = -((((cur_measure - 1) * 4) + cur_beat - 1) * (cur_bpm))
+	measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (main_node.cur_bpm / main_node.speed_mod))
 
 
 # Called every frame the window size is changed
@@ -147,29 +119,29 @@ func _input(event):
 				note_scale.y -= 0.20
 
 		# Play/Stop
-		elif Input.is_action_pressed("play") and music_path != null:
-			is_playing = not(is_playing)
+		elif Input.is_action_pressed("play") and main_node.music_path != null:
+			main_node.is_playing = not(main_node.is_playing)
 			# print("Zoom")
 
 		# Scroll Down
-		elif Input.is_action_pressed("Scroll-Down") and not(is_playing):
-			cur_beat += snap_options[cur_snap]
-			while fmod(cur_beat, snap_options[cur_snap]) != 0:
-				cur_beat -= 0.015625
+		elif Input.is_action_pressed("Scroll-Down") and not(main_node.is_playing):
+			main_node.cur_beat += main_node.snap_options[main_node.cur_snap]
+			while fmod(main_node.cur_beat, main_node.snap_options[main_node.cur_snap]) != 0:
+				main_node.cur_beat -= 0.015625
 
 		# Scroll Up
-		elif Input.is_action_pressed("Scroll-Up") and not(is_playing):
-			cur_beat -= snap_options[cur_snap]
-			while fmod(cur_beat, snap_options[cur_snap]) != 0:
-				cur_beat += 0.015625
+		elif Input.is_action_pressed("Scroll-Up") and not(main_node.is_playing):
+			main_node.cur_beat -= main_node.snap_options[main_node.cur_snap]
+			while fmod(main_node.cur_beat, main_node.snap_options[main_node.cur_snap]) != 0:
+				main_node.cur_beat += 0.015625
 
 		# Snap Down
 		elif Input.is_action_just_pressed("Snap_Down"):
-			cur_snap -= 1
+			set_snap(main_node.cur_snap - 1)
 		
 		# Snap Up
 		elif Input.is_action_just_pressed("Snap_Up"):
-			cur_snap += 1
+			set_snap(main_node.cur_snap + 1)
 
 		# Add Note 1
 		elif Input.is_action_just_pressed("Insert_1"):
@@ -212,57 +184,61 @@ func _input(event):
 			add_note(10);
 
 
-		cur_snap = clamp(cur_snap, 0, snap_options.size() - 1)
-		snap_node.set_text("Snap: " + snap_names[cur_snap])
-		cubes_node.change_color(cur_snap)
 		note_height = area2d_node.scale.x * height_scale + initial_height
 		# area2d_node.scale = note_scale
 		#area2d_node.position = Vector2(window_size.x / area2d_x_div, note_height)
-		measure_fix()
 
 		if OS.is_debug_build():
-			print("measure: " + String.num_int64(cur_measure))
-			print("beat: " + String.num(cur_beat))
-			print("cur_snap: " + String.num_int64(cur_snap))
+			print("measure: " + String.num_int64(main_node.cur_measure))
+			print("beat: " + String.num(main_node.cur_beat))
+			print("cur_snap: " + String.num_int64(main_node.cur_snap))
+
+
+func set_snap(snap: int):
+		snap_changed.emit(snap)
+		snap_node.set_text("Snap: " + snap_names[main_node.cur_snap])
 
 
 # Called on dropping files to the editor
 func _on_files_drop(files):
+	main_node.properties = {}
+
 	var split = files[0].rsplit("/",false,1)
 	print(split)
 
-	file_name = split[1]
-	properties["folder"] = split[0]
+	main_node.file_name = split[1]
+	main_node.properties["folder"] = split[0]
 
 	load_file()
 
 
 # Called on file selection
 func _on_file_dialog_1_file_selected(_path):
+	main_node.properties = {}
 	file_dialog_node.hide()
 
 	for i in notes_collection_node.get_children():
 		notes_collection_node.remove_child(i)
 		i.queue_free()
 
-	properties["folder"] = file_dialog_node.current_dir
+	main_node.properties["folder"] = file_dialog_node.current_dir
 	# print(properties["folder"])
-	file_name = file_dialog_node.current_file
+	main_node.file_name = file_dialog_node.current_file
 	# print(folder_path)
 
 	load_file()
 
 
 func load_file():
-	var split = file_name.split(".",false,1)
+	var split = main_node.file_name.split(".",false,1)
 
 	if music_file_types.has(split[1]):
-		properties["music"] = file_name
-		parser_node.load_music(properties)
+		main_node.properties["music"] = main_node.file_name
+		parser_node.load_music()
 
 	elif chart_file_types.has(split[1]):
-		properties["chart"] = file_name
-		parser_node.load_chart(properties)
+		main_node.properties["chart"] = main_node.file_name
+		parser_node.load_chart()
 		
 	else:
 		message_node.on_error_message("Can't open this file type")
@@ -270,10 +246,10 @@ func load_file():
 
 # Draw all the measures in the scene
 func draw_measures():
-	measure_container_node.change_props(cur_bpm,cur_div)
+	measure_container_node.clear_measures()
 
 	for i in 100:
-		for j in cur_div:
+		for j in main_node.cur_div:
 			measure_container_node.draw_measure(i + 1, j + 1)
 
 
@@ -281,7 +257,7 @@ func draw_measures():
 func add_note(num: int):
 
 	var note_name = ("Area2D/MeasureContainer/NotesCollection/note" \
-	 	+ str(num) + "_" + str(cur_measure) + "_" + str(cur_beat)).replace(".","-")
+	 	+ str(num) + "_" + str(main_node.cur_measure) + "_" + str(main_node.cur_beat)).replace(".","-")
 	var note_node = get_node_or_null(note_name)
 
 	if note_node != null:
@@ -289,33 +265,16 @@ func add_note(num: int):
 		note_node.queue_free()
 		print("note: " + note_name + " removed")
 	else:
-		measure_container_node.add_note_node(num,cur_measure,cur_beat)
+		measure_container_node.add_note_node(num,main_node.cur_measure,main_node.cur_beat)
 		print("note: " + note_name + " added")
 
-func measure_fix():
 
-	if cur_beat < 1.0:
-		cur_beat = cur_div
-		cur_measure -= 1
-
-	elif cur_beat >= cur_div + 1:
-		cur_beat = 1.0  + (cur_beat - cur_div)
-		cur_measure += 1
-
-	if cur_measure < 1:
-		cur_beat = 1.0
-		cur_measure = 1
-
-
-func change_mode(mode: int):
-	chart_type = mode
-	measure_container_node.change_mode(mode)
-
+func set_mode(mode: int):
 	var target_node = $Area2D/Target
 	area2d_node.remove_child(target_node)
 	target_node.queue_free()
 
-	match chart_type:
+	match mode:
 		4:
 			target_node = load(target4k_path).instantiate()
 
@@ -329,13 +288,3 @@ func change_mode(mode: int):
 			target_node = load(target10k_path).instantiate()
 
 	area2d_node.add_child(target_node)
-
-
-func set_bpm(bpm: float):
-	cur_bpm=bpm
-	measure_container_node.change_props(bpm,cur_div)
-
-
-func set_div(div: int):
-	cur_div=div
-	measure_container_node.change_props(cur_bpm,div)

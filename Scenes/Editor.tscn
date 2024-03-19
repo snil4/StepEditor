@@ -71,6 +71,8 @@ script = ExtResource("2_e8bcc")
 z_index = 1
 position = Vector2(0, -2)
 
+[node name="MeasuresCollection" type="Node2D" parent="Area2D/MeasureContainer"]
+
 [node name="Target" parent="Area2D" instance=ExtResource("4_d8eaq")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

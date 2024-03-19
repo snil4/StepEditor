@@ -4,9 +4,12 @@ extends Node2D
 @onready var left_cube = $Cube1
 @onready var right_cube = $Cube2
 
+signal snap_changed(snap: int)
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	change_color(0)
+	$"/root/Main/Editor".snap_changed.connect(Callable(self,"change_color"))
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -14,12 +17,12 @@ func _ready():
 # 	pass
 
 # Function to change the cube's colors to match the correct snap
-func change_color(snap: int):
+func change_color(_snap: int):
 	# By default show the cubes and set the color gray
 	show()
 	var cur_color = Color(0.5,0.5,0.5,1)
 
-	match snap:
+	match $"/root/Main".cur_snap:
 		# Free snap: Don't show cubes
 		0:
 			hide()

@@ -64,6 +64,7 @@ metadata/_edit_use_anchors_ = true
 [node name="Editor" parent="." instance=ExtResource("1_aw7xw")]
 
 [node name="MenuBar" type="MenuBar" parent="."]
+z_index = 1
 layout_mode = 1
 offset_right = 576.0
 offset_bottom = 41.0

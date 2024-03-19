@@ -1,8 +1,5 @@
 extends Node2D
 
-var cur_bpm: float
-var cur_div: int
-var cur_mode: int
 var next_y: int
 # Note scene for creating new note nodes
 var note_scene = preload("res://Scenes/Note.tscn")
@@ -10,7 +7,9 @@ var note_scene = preload("res://Scenes/Note.tscn")
 const measure_scene = preload("res://Scenes/MeasureLine.tscn")
 
 @onready var notes_collection_node = $NotesCollection
-@onready var editor = $"root/Main/Editor"
+@onready var measures_collection_node = $MeasuresCollection
+@onready var editor_node = $"/root/Main/Editor"
+@onready var main_node = $"/root/Main"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -23,20 +22,26 @@ const measure_scene = preload("res://Scenes/MeasureLine.tscn")
 # 	pass
 
 
-func change_mode(mode: int):
-	cur_mode = mode
+# func change_mode(mode: int):
+# 	cur_mode = mode
 
 
-func change_props(bpm: float, div: int):
-	cur_bpm = bpm
-	cur_div = div
+# func change_props(bpm: float, div: int):
+# 	cur_bpm = bpm
+# 	cur_div = div
+
+
+func clear_measures():
+	for i in measures_collection_node.get_children():
+		measures_collection_node.remove_child(i)
+		i.queue_free()
 
 
 func draw_measure(measure: int, beat: float):
-	var width = 3
 
+	var width = 3
 	var measure_node = measure_scene.instantiate()
-	add_child(measure_node)
+	measures_collection_node.add_child(measure_node)
 	
 	if beat != 1:
 		width = 1
@@ -44,14 +49,14 @@ func draw_measure(measure: int, beat: float):
 	measure_node.position.y = 0
 
 	if measure > 1 or beat > 1:
-		measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (cur_bpm)
+		measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)
 
 	measure_node.new_measure(-150, 150,measure, width)
 
 
 func add_note_node(num: int, measure: int, beat: float):
 
-	if num > cur_mode:
+	if num > main_node.cur_mode:
 		return
 
 	var note_node = note_scene.instantiate()
@@ -59,11 +64,11 @@ func add_note_node(num: int, measure: int, beat: float):
 						 + "_" + str(beat)).replace(".","-"))
 
 	var animation_node = note_node.get_node("AnimatedSprite2D")
-	match cur_mode:
+	match main_node.cur_mode:
 
 		4:
 			animation_node.set_animation("4k_1")
-			note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))
+			note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)))
 
 			match num:
 				1:
@@ -76,7 +81,7 @@ func add_note_node(num: int, measure: int, beat: float):
 					animation_node.set_rotation_degrees(-90)
 
 		5:
-			note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (cur_bpm)))
+			note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)))
 
 			if num > 3:
 				animation_node.flip_h = true

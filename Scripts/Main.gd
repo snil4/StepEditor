@@ -1,8 +1,38 @@
 extends Control
 
+## File managment variables
+# Song properties
+var properties = {}
+# Path for the music file
+var music_path
+# Path for the charts file
+var file_path
+# Name of the charts file
+var file_name
+## Current chart properties
+# Playing status
+var is_playing = false
+# Current location inside the measure
+var cur_beat = 1.0
+# Current location by measure
+var cur_measure = 1
+# Current BPM
+var cur_bpm = 100.0
+# Current measure division
+var cur_div = 4
+# Current snap value
+var cur_snap: int = 0
+var cur_mode: int = 4
+@export var speed_mod = 2.0
+
+# Numeric values of the cur_snap options
+const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
+
 @onready var rect_node = $"MenuBar/ColorRect"
 @onready var touch_node = $TouchButtons
 @onready var editor_node = $Editor
+@onready var parser_node = $Parser
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,8 +50,14 @@ func _ready():
 														(DisplayServer.screen_get_dpi() / 50.0))
 
 	get_tree().get_root().size_changed.connect(Callable(self, "change_window"))
+	parser_node.bpm_changed.connect(Callable(self, "set_bpm"))
+	parser_node.mode_changed.connect(Callable(self, "set_mode"))
+	parser_node.div_changed.connect(Callable(self, "set_div"))
+	editor_node.snap_changed.connect(Callable(self, "set_snap"))
+
 	change_window()
 	editor_node.change_window()
+	set_mode(4)
 
 	load_game()
 	
@@ -31,6 +67,43 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
+
+
+func set_bpm(bpm: float):
+	cur_bpm = bpm
+
+
+func set_beat(beat: float):
+	cur_beat = beat
+	measure_fix()
+
+
+func set_mode(mode: int):
+	cur_mode = mode
+
+
+func set_div(div: int):
+	cur_div = div
+
+
+func set_snap(snap: int):
+	cur_snap = snap
+	cur_snap = clamp(cur_snap, 0, snap_options.size() - 1)
+
+
+func measure_fix():
+
+	if cur_beat < 1.0:
+		cur_beat = (cur_div + 1) - snap_options[cur_snap]
+		cur_measure -= 1
+
+	elif cur_beat >= cur_div + 1:
+		cur_beat = 1.0
+		cur_measure += 1
+
+	if cur_measure < 1:
+		cur_beat = 1.0
+		cur_measure = 1
 
 
 func change_window():

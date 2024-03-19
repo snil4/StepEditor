@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cjokr1kg0psn8" path="res://Assets/Noteskins/Pump/R3.png" id="3_50208"]
 
 [node name="Target" type="Node2D"]
-position = Vector2(2.08165e-12, 2.08165e-12)
+position = Vector2(-1, -2)
 
 [node name="DownLeft" type="Sprite2D" parent="."]
 position = Vector2(-128, 2.08165e-12)
