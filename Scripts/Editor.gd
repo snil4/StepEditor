@@ -42,6 +42,7 @@ const target10k_path = "res://Scenes/Targets/Target10k.tscn"
 @onready var notes_collection_node = $Area2D/MeasureContainer/NotesCollection
 
 signal snap_changed(snap :int)
+signal beat_changed(beat :int)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -64,7 +65,8 @@ func _process(delta):
 	if main_node.is_playing:
 		main_node.cur_beat += ((main_node.cur_bpm * 32.0) / 60.0) * delta
 
-	measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (main_node.cur_bpm / main_node.speed_mod))
+	# measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (main_node.cur_bpm / main_node.speed_mod))
+	measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (100 / main_node.speed_mod))
 
 
 # Called every frame the window size is changed
@@ -125,15 +127,19 @@ func _input(event):
 
 		# Scroll Down
 		elif Input.is_action_pressed("Scroll-Down") and not(main_node.is_playing):
-			main_node.cur_beat += main_node.snap_options[main_node.cur_snap]
-			while fmod(main_node.cur_beat, main_node.snap_options[main_node.cur_snap]) != 0:
-				main_node.cur_beat -= 0.015625
+			var beat = main_node.cur_beat + main_node.snap_options[main_node.cur_snap]
+			while fmod(beat, main_node.snap_options[main_node.cur_snap]) != 0:
+				beat -= 0.015625
+			
+			beat_changed.emit(beat)
 
 		# Scroll Up
 		elif Input.is_action_pressed("Scroll-Up") and not(main_node.is_playing):
-			main_node.cur_beat -= main_node.snap_options[main_node.cur_snap]
-			while fmod(main_node.cur_beat, main_node.snap_options[main_node.cur_snap]) != 0:
-				main_node.cur_beat += 0.015625
+			var beat = main_node.cur_beat - main_node.snap_options[main_node.cur_snap]
+			while fmod(beat, main_node.snap_options[main_node.cur_snap]) != 0:
+				beat += 0.015625
+
+			beat_changed.emit(beat)
 
 		# Snap Down
 		elif Input.is_action_just_pressed("Snap_Down"):

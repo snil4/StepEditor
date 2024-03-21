@@ -54,6 +54,7 @@ func _ready():
 	parser_node.mode_changed.connect(Callable(self, "set_mode"))
 	parser_node.div_changed.connect(Callable(self, "set_div"))
 	editor_node.snap_changed.connect(Callable(self, "set_snap"))
+	editor_node.beat_changed.connect(Callable(self, "set_beat"))
 
 	change_window()
 	editor_node.change_window()
