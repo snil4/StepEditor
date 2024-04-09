@@ -27,6 +27,7 @@ var cur_mode: int = 4
 
 # Numeric values of the cur_snap options
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]
+const speed_pow = 50
 
 @onready var rect_node = $"MenuBar/ColorRect"
 @onready var touch_node = $TouchButtons
@@ -58,7 +59,7 @@ func _ready():
 
 	change_window()
 	editor_node.change_window()
-	set_mode(4)
+	parser_node.mode_changed.emit(5)
 
 	load_game()
 	

@@ -48,8 +48,9 @@ func load_chart():
 	else:
 		main_node.properties["type"] = "sm"
 		mode_changed.emit(4)
-		
-		file = FileAccess.open(file_path, FileAccess.READ)
+
+		file = open_file(file_path)
+
 		# index = 0
 		while not file.eof_reached(): # iterate through all lines until the end of file is reached
 			line = file.get_line()
@@ -83,7 +84,7 @@ func parse_ucs():
 	# Set global file path for the chart
 	file_path = main_node.properties["folder"] + "/" + main_node.properties["chart"]
 	print(file_path)
-	file = FileAccess.open(file_path, FileAccess.READ)
+	file = open_file(file_path)
 
 	# Main loop
 	while not file.eof_reached(): # iterate through all lines until the end of file is reached
@@ -148,3 +149,14 @@ func measure_fix():
 	if cur_measure < 1:
 		cur_beat = 1.0
 		cur_measure = 1
+
+
+func open_file(full_path: String) -> FileAccess:
+	var _file = FileAccess.open(full_path, FileAccess.READ)
+
+	# Write a backup file
+	var _write_file = FileAccess.open(full_path + ".bak",FileAccess.WRITE)
+	_write_file.store_string(_file.get_as_text())
+	_write_file.close()
+
+	return _file

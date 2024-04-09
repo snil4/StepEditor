@@ -66,7 +66,7 @@ func _process(delta):
 		main_node.cur_beat += ((main_node.cur_bpm * 32.0) / 60.0) * delta
 
 	# measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (main_node.cur_bpm / main_node.speed_mod))
-	measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (100 / main_node.speed_mod))
+	measure_container_node.position.y = -((((main_node.cur_measure - 1) * 4) + main_node.cur_beat - 1) * (main_node.speed_mod * main_node.speed_pow))
 
 
 # Called every frame the window size is changed

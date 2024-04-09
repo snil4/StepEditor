@@ -3,6 +3,7 @@ extends MenuButton
 var touchMode = false
 
 @onready var about_node = get_node("/root/Main/AboutDialog")
+@onready var speed_node = get_node("/root/Main/SpeedWindow")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -23,3 +24,5 @@ func _on_item_pressed(id):
 		0:
 			touchMode = not(touchMode)
 			get_popup().set_item_checked(id,touchMode)
+		1:
+			speed_node.on_display()

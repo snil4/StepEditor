@@ -50,7 +50,7 @@ func draw_measure(measure: int, beat: float):
 
 	if measure > 1 or beat > 1:
 		# measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)
-		measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (100 / main_node.speed_mod)
+		measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (main_node.speed_mod * main_node.speed_pow)
 
 	measure_node.new_measure(-150, 150,measure, width)
 
@@ -70,7 +70,7 @@ func add_note_node(num: int, measure: int, beat: float):
 		4:
 			animation_node.set_animation("4k_1")
 			# note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)))
-			note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (100 / main_node.speed_mod)))
+			note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (main_node.speed_mod * main_node.speed_pow)))
 
 			match num:
 				1:
@@ -84,7 +84,7 @@ func add_note_node(num: int, measure: int, beat: float):
 
 		5:
 			# note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)))
-			note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (100 / main_node.speed_mod)))
+			note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (main_node.speed_mod * main_node.speed_pow)))
 
 			if num > 3:
 				animation_node.flip_h = true
