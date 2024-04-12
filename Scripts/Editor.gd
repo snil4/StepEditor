@@ -43,6 +43,7 @@ const target10k_path = "res://Scenes/Targets/Target10k.tscn"
 
 signal snap_changed(snap :int)
 signal beat_changed(beat :int)
+signal play()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -122,8 +123,7 @@ func _input(event):
 
 		# Play/Stop
 		elif Input.is_action_pressed("play") and main_node.music_path != null:
-			main_node.is_playing = not(main_node.is_playing)
-			# print("Zoom")
+			play.emit()
 
 		# Scroll Down
 		elif Input.is_action_pressed("Scroll-Down") and not(main_node.is_playing):

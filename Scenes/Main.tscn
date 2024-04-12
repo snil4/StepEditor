@@ -250,6 +250,8 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "OK"
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
 [connection signal="file_selected" from="FileDialog1" to="Editor" method="_on_file_dialog_1_file_selected"]
 [connection signal="custom_action" from="AboutDialog" to="AboutDialog" method="_on_custom_action"]
 [connection signal="canceled" from="ExitDialog" to="ExitDialog" method="_on_canceled"]

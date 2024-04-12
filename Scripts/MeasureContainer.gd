@@ -11,10 +11,13 @@ const measure_scene = preload("res://Scenes/MeasureLine.tscn")
 @onready var editor_node = $"/root/Main/Editor"
 @onready var main_node = $"/root/Main"
 
+signal beat_changed(beat: float)
+signal measure_changed(measure: int)
+
 
 # Called when the node enters the scene tree for the first time.
 # func _ready():
-# 	pass # Replace with function body.
+# 	editor_node.beat_changed.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -94,3 +97,9 @@ func add_note_node(num: int, measure: int, beat: float):
 				animation_node.set_animation("5k_" + str(num))
 
 	notes_collection_node.add_child(note_node)
+
+
+func jump_to(measure: int):
+	beat_changed.emit(1.0)
+	measure_changed.emit(measure)
+	position.y = ((measure - 1) * (main_node.speed_mod * main_node.speed_pow)) * -1
