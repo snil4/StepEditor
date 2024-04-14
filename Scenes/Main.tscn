@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dpncvve46oilr"]
+[gd_scene load_steps=22 format=3 uid="uid://dpncvve46oilr"]
 
 [ext_resource type="PackedScene" uid="uid://dd2nfqupg7qfe" path="res://Scenes/Editor.tscn" id="1_aw7xw"]
 [ext_resource type="Script" path="res://Scripts/FileMenu.gd" id="1_b857c"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://Scripts/AboutDialog.gd" id="7_ufk08"]
 [ext_resource type="Script" path="res://Scripts/ExitDialog.gd" id="8_71i1c"]
 [ext_resource type="Script" path="res://Scripts/SpeedWindow.gd" id="10_lp21x"]
+[ext_resource type="Script" path="res://Scripts/MusicPlayer.gd" id="11_ndwlc"]
 
 [sub_resource type="Theme" id="Theme_uoqn6"]
 
@@ -158,6 +159,7 @@ script = ExtResource("5_bb8wl")
 
 [node name="AboutDialog" type="AcceptDialog" parent="."]
 title = "About"
+size = Vector2i(100, 109)
 ok_button_text = "Close"
 dialog_text = "Made by Snil"
 dialog_autowrap = true
@@ -250,7 +252,9 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "OK"
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+bus = &"Music"
+script = ExtResource("11_ndwlc")
 
 [connection signal="file_selected" from="FileDialog1" to="Editor" method="_on_file_dialog_1_file_selected"]
 [connection signal="custom_action" from="AboutDialog" to="AboutDialog" method="_on_custom_action"]

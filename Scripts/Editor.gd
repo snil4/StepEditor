@@ -236,6 +236,7 @@ func _on_file_dialog_1_file_selected(_path):
 
 
 func load_file():
+	main_node.properties.clear()
 	var split = main_node.file_name.split(".",false,1)
 
 	if music_file_types.has(split[1]):

@@ -14,6 +14,7 @@ var cur_beat: float
 @onready var editor_node = $"/root/Main/Editor"
 @onready var main_node = $"/root/Main"
 
+signal music_loaded(file :String)
 signal mode_changed(mode: int)
 signal bpm_changed(bpm: float)
 signal div_changed(div: int)
@@ -27,11 +28,19 @@ func load_music():
 
 	file_path = main_node.properties["folder"] + "/" + main_node.properties["music"]
 
-	if main_node.properties["music"].ends_with(".ogg"):
+	if main_node.properties["Title"] == null:
+		main_node.properties["Title"] = main_node.properties["music"].rsplit(".",true,1)[0]
+
+
+	if main_node.properties["music"].to_lower().ends_with(".ogg"):
 		main_node.properties["Title"] = main_node.properties["music"].trim_suffix(".ogg")
 
-	elif main_node.properties["music"].ends_with(".mp3"):
+	elif main_node.properties["music"].to_lower().ends_with(".mp3"):
 		main_node.properties["Title"] = main_node.properties["music"].trim_suffix(".mp3")
+
+	elif main_node.properties["music"].to_lower().ends_with(".wav"):
+		main_node.properties["Title"] = main_node.properties["music"].trim_suffix(".wav")
+
 
 
 func load_chart():

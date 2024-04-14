@@ -26,7 +26,9 @@ func set_play():
 			on_error.emit("No music file found")
 		
 		else:
-			play()
+			var play_time: float = (((main_node.cur_measure - 1.0) * main_node.cur_div) \
+				 + (main_node.cur_beat - 1.0)) / (main_node.cur_bpm / 60.0)
+			play(play_time)
 
 	else:
 		playing = false
