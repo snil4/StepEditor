@@ -44,6 +44,7 @@ const target10k_path = "res://Scenes/Targets/Target10k.tscn"
 signal snap_changed(snap :int)
 signal beat_changed(beat :int)
 signal play()
+signal recent_added(path: String)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -236,6 +237,7 @@ func _on_file_dialog_1_file_selected(_path):
 
 
 func load_file():
+	recent_added.emit(main_node.properties["folder"] + "/" + main_node.file_name)
 	main_node.properties.clear()
 	var split = main_node.file_name.split(".",false,1)
 

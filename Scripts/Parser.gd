@@ -164,7 +164,7 @@ func open_file(full_path: String) -> FileAccess:
 	var _file = FileAccess.open(full_path, FileAccess.READ)
 
 	# Write a backup file
-	var _write_file = FileAccess.open(full_path + ".bak",FileAccess.WRITE)
+	var _write_file = FileAccess.open(full_path + ".old",FileAccess.WRITE)
 	_write_file.store_string(_file.get_as_text())
 	_write_file.close()
 

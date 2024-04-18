@@ -79,13 +79,14 @@ offset_right = 576.0
 offset_bottom = 41.0
 color = Color(0.184314, 0.184314, 0.184314, 1)
 
-[node name="FileMenu" type="MenuButton" parent="MenuBar" groups=["Persist"]]
+[node name="FileMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
 offset_right = 111.0
 offset_bottom = 41.0
 theme = SubResource("Theme_uoqn6")
 text = "File"
 flat = false
+switch_on_hover = true
 item_count = 6
 popup/item_0/text = "Open"
 popup/item_0/id = 0
@@ -110,6 +111,7 @@ offset_bottom = 41.0
 text = "View
 "
 flat = false
+switch_on_hover = true
 item_count = 3
 popup/item_0/text = "Touch Mode"
 popup/item_0/checkable = 1
@@ -128,6 +130,7 @@ offset_right = 333.0
 offset_bottom = 41.0
 text = "Help"
 flat = false
+switch_on_hover = true
 item_count = 3
 popup/item_0/text = "Instructions"
 popup/item_0/id = 0

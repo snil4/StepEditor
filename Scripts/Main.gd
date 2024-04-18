@@ -60,8 +60,6 @@ func _ready():
 	change_window()
 	editor_node.change_window()
 	parser_node.mode_changed.emit(5)
-
-	load_game()
 	
 	editor_node.initial = false
 
@@ -139,46 +137,3 @@ func save_game():
 
 		# Store the save dictionary as a new line in the save file.
 		save_file.store_line(json_string)
-
-	
-# Note: This can be called from anywhere inside the tree. This function
-# is path independent.
-func load_game():
-
-	# If no save file found then create a new one
-	if not FileAccess.file_exists("user://savegame.save"):
-		FileAccess.open("user://savegame.save", FileAccess.WRITE)
-		save_game()
-		return # Error! We don't have a save to load.
-
-	# Get all saveable nodes in the scene
-	var save_nodes = get_tree().get_nodes_in_group("Persist")
-
-	# Load the file line by line and process that dictionary to restore
-	# the object it represents.
-	var save_file = FileAccess.open("user://savegame.save", FileAccess.READ)
-	while save_file.get_position() < save_file.get_length():
-		var json_string = save_file.get_line()
-
-		# Creates the helper class to interact with JSON
-		var json = JSON.new()
-
-		# Check if there is any error while parsing the JSON string, skip in case of failure
-		var parse_result = json.parse(json_string)
-		if not parse_result == OK:
-			print("JSON Parse Error: ", json.get_error_message(), " in ", json_string, " at line ", json.get_error_line())
-			continue
-
-		# Get the data from the JSON object
-		var node_data = json.get_data()
-
-		# Firstly, we need to create the object and add it to the tree and set its position.
-		var new_object = $node_data["filename"].load()
-		get_node(node_data["parent"]).add_child(new_object)
-		new_object.position = Vector2(node_data["pos_x"], node_data["pos_y"])
-
-		# Now we set the remaining variables.
-		for i in node_data.keys():
-			if i == "filename" or i == "parent" or i == "pos_x" or i == "pos_y":
-				continue
-			new_object.set(i, node_data[i])
