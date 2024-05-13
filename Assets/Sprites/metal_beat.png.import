@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cc2m6ajh52bfh"
-path="res://.godot/imported/metal_beat.png-ed7448705907ed262be5cb4b6b7739a4.ctex"
+path="res://.godot/imported/metal_beat.png-5065331ec9f398e181f8d8cd72ffc72d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/metal_beat.png"
-dest_files=["res://.godot/imported/metal_beat.png-ed7448705907ed262be5cb4b6b7739a4.ctex"]
+source_file="res://Assets/Sprites/metal_beat.png"
+dest_files=["res://.godot/imported/metal_beat.png-5065331ec9f398e181f8d8cd72ffc72d.ctex"]
 
 [params]
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://5m8d86kkr7u4"]
 
-[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Sprites/metal_normal.png" id="1_1rien"]
+[ext_resource type="Texture2D" uid="uid://bfi1pfmcl6ril" path="res://Assets/Sprites/metal_normal.png" id="1_1rien"]
 
 [node name="Target" type="Node2D"]
 position = Vector2(2.08165e-12, -2)
