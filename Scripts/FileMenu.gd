@@ -6,6 +6,7 @@ var files: PackedStringArray
 
 @onready var file_dialog_node = $"/root/Main/FileDialog1"
 @onready var exit_dialog_node = $"/root/Main/ExitDialog"
+@onready var editor_node = $"/root/Main/Editor"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -25,6 +26,9 @@ func _on_item_pressed(id):
 
 		2:
 			exit_dialog_node.on_display()
+
+		6:
+			editor_node.new_file()
 		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

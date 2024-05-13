@@ -6,6 +6,8 @@ extends Window
 
 var cur_speed: float
 
+signal speed_changed()
+
 
 # Called when the node enters the scene tree for the first time.
 # func _ready():
@@ -41,4 +43,5 @@ func set_label(speed: float):
 
 func _on_button_pressed():
 	main_node.speed_mod = cur_speed
+	speed_changed.emit()
 	hide()

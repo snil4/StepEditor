@@ -1,6 +1,7 @@
 extends Node2D
 
 var next_y: int
+@export var measure_width: int = 3
 # Note scene for creating new note nodes
 var note_scene = preload("res://Scenes/Note.tscn")
 # Measure line scene for creating new measure line nodes
@@ -10,14 +11,15 @@ const measure_scene = preload("res://Scenes/MeasureLine.tscn")
 @onready var measures_collection_node = $MeasuresCollection
 @onready var editor_node = $"/root/Main/Editor"
 @onready var main_node = $"/root/Main"
+@onready var speed_node = $"/root/Main/SpeedWindow"
 
 signal beat_changed(beat: float)
 signal measure_changed(measure: int)
 
 
 # Called when the node enters the scene tree for the first time.
-# func _ready():
-# 	editor_node.beat_changed.
+func _ready():
+	speed_node.speed_changed.connect(Callable(self, "change_speed"))
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,9 +42,13 @@ func clear_measures():
 		i.queue_free()
 
 
+func change_speed():
+	draw_measures()
+	
+
 func draw_measure(measure: int, beat: float):
 
-	var width = 3
+	var width = measure_width
 	var measure_node = measure_scene.instantiate()
 	measures_collection_node.add_child(measure_node)
 	
@@ -56,6 +62,15 @@ func draw_measure(measure: int, beat: float):
 		measure_node.position.y = (((measure - 1) * 4) + beat - 1) * (main_node.speed_mod * main_node.speed_pow)
 
 	measure_node.new_measure(-150, 150,measure, width)
+
+
+# Draw all the measures in the scene
+func draw_measures():
+	clear_measures()
+
+	for i in 100:
+		for j in main_node.cur_div:
+			draw_measure(i + 1, j + 1)
 
 
 func add_note_node(num: int, measure: int, beat: float):

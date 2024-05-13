@@ -31,7 +31,6 @@ func load_music():
 	if main_node.properties["Title"] == null:
 		main_node.properties["Title"] = main_node.properties["music"].rsplit(".",true,1)[0]
 
-
 	if main_node.properties["music"].to_lower().ends_with(".ogg"):
 		main_node.properties["Title"] = main_node.properties["music"].trim_suffix(".ogg")
 
@@ -109,12 +108,12 @@ func parse_ucs():
 				"bpm":
 					bpm_changed.emit(float(cur_property[1]))
 					measure_container_node.clear_measures()
-					editor_node.draw_measures()
+					measure_container_node.draw_measures()
 					
 				"beat":
 					div_changed.emit(int(cur_property[1]))
 					measure_container_node.clear_measures()
-					editor_node.draw_measures()
+					measure_container_node.draw_measures()
 					
 				"split":
 					cur_split=int(cur_property[1])
@@ -129,15 +128,28 @@ func parse_ucs():
 			var line_buffer = line.to_ascii_buffer()
 
 			if line_buffer.size() > 0:
+				# main_node.notes_array[cur_measure * 1000 + cur_beat * 128]
+
 				for i in main_node.cur_mode:
 					
+					# X
 					if   line_buffer[i] == 88:
+						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "X"
 						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+
+					# M
 					elif line_buffer[i] == 77:
+						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "M"
 						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+
+					# H
 					elif line_buffer[i] == 72:
+						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "H"
 						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+
+					# W
 					elif line_buffer[i] == 87:
+						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "W"
 						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
 
 				cur_beat += 1.0 / float(cur_split)
@@ -169,3 +181,8 @@ func open_file(full_path: String) -> FileAccess:
 	_write_file.close()
 
 	return _file
+
+
+func save_file():
+	for i in main_node.notes_array.size():
+		

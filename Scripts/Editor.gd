@@ -48,6 +48,7 @@ signal recent_added(path: String)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
 	set_process_input(true)
 
 	last_window_x = get_window().get_size_with_decorations().x
@@ -58,7 +59,7 @@ func _ready():
 	get_viewport().files_dropped.connect(Callable(self, "_on_files_drop"))
 	parser_node.mode_changed.connect(Callable(self, "set_mode"))
 	
-	draw_measures()
+	measure_container_node.draw_measures()
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -208,7 +209,8 @@ func set_snap(snap: int):
 
 # Called on dropping files to the editor
 func _on_files_drop(files):
-	main_node.properties = {}
+
+	main_node.properties.clear()
 
 	var split = files[0].rsplit("/",false,1)
 	print(split)
@@ -221,12 +223,9 @@ func _on_files_drop(files):
 
 # Called on file selection
 func _on_file_dialog_1_file_selected(_path):
-	main_node.properties = {}
-	file_dialog_node.hide()
 
-	for i in notes_collection_node.get_children():
-		notes_collection_node.remove_child(i)
-		i.queue_free()
+	main_node.properties.clear()
+	file_dialog_node.hide()
 
 	main_node.properties["folder"] = file_dialog_node.current_dir
 	# print(properties["folder"])
@@ -237,8 +236,13 @@ func _on_file_dialog_1_file_selected(_path):
 
 
 func load_file():
+
+	main_node.notes_array.clear()
+	for i in notes_collection_node.get_children():
+		notes_collection_node.remove_child(i)
+		i.queue_free()
+
 	recent_added.emit(main_node.properties["folder"] + "/" + main_node.file_name)
-	main_node.properties.clear()
 	var split = main_node.file_name.split(".",false,1)
 
 	if music_file_types.has(split[1]):
@@ -252,14 +256,17 @@ func load_file():
 	else:
 		message_node.on_error_message("Can't open this file type")
 
+func new_file():
+	
+	main_node.notes_array.clear()
+	main_node.properties.clear()
 
-# Draw all the measures in the scene
-func draw_measures():
-	measure_container_node.clear_measures()
+	for i in notes_collection_node.get_children():
+		notes_collection_node.remove_child(i)
+		i.queue_free()	
 
-	for i in 100:
-		for j in main_node.cur_div:
-			measure_container_node.draw_measure(i + 1, j + 1)
+	main_node.cur_beat = 1.0
+	main_node.cur_measure = 1
 
 
 # Add a new note
@@ -272,13 +279,17 @@ func add_note(num: int):
 	if note_node != null:
 		notes_collection_node.remove_child(note_node)
 		note_node.queue_free()
+		main_node.notes_array.erase(main_node.cur_measure * 1000 + main_node.cur_beat * 128 + (num - 1) / 10.0)
 		print("note: " + note_name + " removed")
+
 	else:
 		measure_container_node.add_note_node(num,main_node.cur_measure,main_node.cur_beat)
+		main_node.notes_array[main_node.cur_measure * 1000 + main_node.cur_beat * 128 + (num - 1) / 10.0] = "X"
 		print("note: " + note_name + " added")
 
 
 func set_mode(mode: int):
+
 	var target_node = $Area2D/Target
 	area2d_node.remove_child(target_node)
 	target_node.queue_free()
