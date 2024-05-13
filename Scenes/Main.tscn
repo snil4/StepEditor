@@ -1,15 +1,15 @@
 [gd_scene load_steps=22 format=3 uid="uid://dpncvve46oilr"]
 
 [ext_resource type="PackedScene" uid="uid://dd2nfqupg7qfe" path="res://Scenes/Editor.tscn" id="1_aw7xw"]
-[ext_resource type="Script" path="res://Scripts/FileMenu.gd" id="1_b857c"]
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_cq5ae"]
-[ext_resource type="Script" path="res://Scripts/ViewMenu.gd" id="4_cho6b"]
+[ext_resource type="Script" path="res://Scripts/Menus/FileMenu.gd" id="3_5h0q7"]
 [ext_resource type="Script" path="res://Scripts/MessageDialog.gd" id="4_h1xth"]
-[ext_resource type="Script" path="res://Scripts/HelpMenu.gd" id="4_p076m"]
+[ext_resource type="Script" path="res://Scripts/Menus/ViewMenu.gd" id="4_wqaoy"]
+[ext_resource type="Script" path="res://Scripts/Menus/HelpMenu.gd" id="5_11n5i"]
 [ext_resource type="Script" path="res://Scripts/Parser.gd" id="5_bb8wl"]
-[ext_resource type="Script" path="res://Scripts/AboutDialog.gd" id="7_ufk08"]
-[ext_resource type="Script" path="res://Scripts/ExitDialog.gd" id="8_71i1c"]
-[ext_resource type="Script" path="res://Scripts/SpeedWindow.gd" id="10_lp21x"]
+[ext_resource type="Script" path="res://Scripts/Menus/AboutDialog.gd" id="8_jrbkd"]
+[ext_resource type="Script" path="res://Scripts/Menus/ExitDialog.gd" id="9_84lq8"]
+[ext_resource type="Script" path="res://Scripts/Menus/SpeedWindow.gd" id="10_wm4uq"]
 [ext_resource type="Script" path="res://Scripts/MusicPlayer.gd" id="11_ndwlc"]
 
 [sub_resource type="Theme" id="Theme_uoqn6"]
@@ -106,7 +106,7 @@ popup/item_6/text = "Save As"
 popup/item_6/id = 5
 popup/item_7/text = "Exit"
 popup/item_7/id = 2
-script = ExtResource("1_b857c")
+script = ExtResource("3_5h0q7")
 
 [node name="ViewMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
@@ -126,7 +126,7 @@ popup/item_1/id = 999
 popup/item_1/separator = true
 popup/item_2/text = "Change Speed"
 popup/item_2/id = 1
-script = ExtResource("4_cho6b")
+script = ExtResource("4_wqaoy")
 
 [node name="HelpMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
@@ -144,7 +144,7 @@ popup/item_1/id = 999
 popup/item_1/separator = true
 popup/item_2/text = "About"
 popup/item_2/id = 1
-script = ExtResource("4_p076m")
+script = ExtResource("5_11n5i")
 
 [node name="FileDialog1" type="FileDialog" parent="."]
 title = "Open a File"
@@ -171,14 +171,14 @@ size = Vector2i(100, 109)
 ok_button_text = "Close"
 dialog_text = "Made by Snil"
 dialog_autowrap = true
-script = ExtResource("7_ufk08")
+script = ExtResource("8_jrbkd")
 
 [node name="ExitDialog" type="ConfirmationDialog" parent="."]
 initial_position = 2
 ok_button_text = "Yes"
 dialog_text = "Are you sure you want to exit?"
 cancel_button_text = "No"
-script = ExtResource("8_71i1c")
+script = ExtResource("9_84lq8")
 
 [node name="TouchButtons" type="Node2D" parent="."]
 visible = false
@@ -214,7 +214,7 @@ title = "Change Speed"
 size = Vector2i(120, 120)
 visible = false
 unresizable = true
-script = ExtResource("10_lp21x")
+script = ExtResource("10_wm4uq")
 
 [node name="Label" type="Label" parent="SpeedWindow"]
 anchors_preset = -1
