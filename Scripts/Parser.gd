@@ -185,4 +185,4 @@ func open_file(full_path: String) -> FileAccess:
 
 func save_file():
 	for i in main_node.notes_array.size():
-		
+		pass
