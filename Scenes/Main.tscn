@@ -12,7 +12,7 @@
 [ext_resource type="Script" path="res://Scripts/Menus/SpeedWindow.gd" id="10_wm4uq"]
 [ext_resource type="Script" path="res://Scripts/MusicPlayer.gd" id="11_ndwlc"]
 
-[sub_resource type="Theme" id="Theme_uoqn6"]
+[sub_resource type="Theme" id="Theme_jx621"]
 
 [sub_resource type="Gradient" id="Gradient_jxoij"]
 offsets = PackedFloat32Array(1)
@@ -51,6 +51,7 @@ size = Vector2(100, 100)
 
 [node name="Main" type="Control"]
 clip_contents = true
+layout_direction = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,10 +69,9 @@ metadata/_edit_use_anchors_ = true
 
 [node name="MenuBar" type="MenuBar" parent="."]
 z_index = 1
+layout_direction = 2
 layout_mode = 1
-offset_right = 576.0
-offset_bottom = 41.0
-start_index = 1
+auto_translate = false
 
 [node name="ColorRect" type="ColorRect" parent="MenuBar"]
 layout_mode = 0
@@ -83,7 +83,7 @@ color = Color(0.184314, 0.184314, 0.184314, 1)
 layout_mode = 0
 offset_right = 111.0
 offset_bottom = 41.0
-theme = SubResource("Theme_uoqn6")
+theme = SubResource("Theme_jx621")
 text = "File"
 flat = false
 switch_on_hover = true

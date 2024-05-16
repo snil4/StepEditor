@@ -36,50 +36,52 @@ func _on_item_pressed(id):
 # 	pass
 
 
-func add_recent(path: String):
+func save_recent(path: String):
 
-	for i in range(recent_amount,0,-1):
-		files[i] = files[i - 1]
+	var line_num = 0
+	var recent_array = []
+	var found = false
 
-	files[0] = path
-	save_recent()
+	if not(FileAccess.file_exists("user://recents.save")):
+		var new_file = FileAccess.open("user://recents.save", FileAccess.WRITE)
+		new_file.store_line(path)
+		new_file.close()
+		return
 
+	var save_read = FileAccess.open("user://recents.save", FileAccess.READ)
 
-func save_recent():
+	while not(save_read.eof_reached()) and line_num < recent_amount: # iterate through all lines until the end of file is reached
 
-	var save_game = FileAccess.open("user://recents.save", FileAccess.WRITE)
-	var save_dict = {
-		"files" : files
-    }
+		var line = save_read.get_line()
+		line_num += 1
 
-	# JSON provides a static method to serialized JSON string.
-	var json_string = JSON.stringify(save_dict)
+		if line == path:
+			found = true
 
-	# Store the save dictionary as a new line in the save file.
-	save_game.store_line(json_string)
-	save_game.close()
+		else:
+			recent_array.append(line)
+
+	save_read.close()
+
+	if found:
+		var new_file = FileAccess.open("user://recents.save", FileAccess.WRITE)
+		new_file.store_line(path)
+
+		for recent in recent_array:
+			new_file.store_line(recent)
+
+		new_file.close()
 
 
 func load_recent():
 
-	var save_game = FileAccess.open("user://recents.save", FileAccess.WRITE)
+	if not(FileAccess.file_exists("user://recents.save")):
+		return
 
-	while save_game.get_position() < save_game.get_length():
-		var json_string = save_game.get_line()
+	var save_game = FileAccess.open("user://recents.save", FileAccess.READ)
 
-		# Creates the helper class to interact with JSON
-		var json = JSON.new()
+	while not save_game.eof_reached(): # iterate through all lines until the end of file is reached
+		var line = save_game.get_line()
 
-		# Check if there is any error while parsing the JSON string, skip in case of failure
-		var parse_result = json.parse(json_string)
-		if not parse_result == OK:
-			print("JSON Parse Error: ", json.get_error_message(), " in ", json_string, " at line ", json.get_error_line())
-			continue
-
-		# Get the data from the JSON object
-		var node_data = json.get_data()
-
-		# Firstly, we need to create the object and add it to the tree and set its position.
-		files = node_data["files"]
 
 	save_game.close()

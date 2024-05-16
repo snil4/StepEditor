@@ -79,8 +79,8 @@ func change_window():
 	background_node.set_size(window_size)
 	area2d_node.scale = note_scale
 	
-	left_line_node.points[1].y = window_size.y
-	right_line_node.points[1].y = window_size.y
+	left_line_node.points[1].y = window_size.y + 200
+	right_line_node.points[1].y = window_size.y + 200
 
 	# Scale the size of the arrows to not be bigger than the screen borders
 	if window_size.x < area2d_node.scale.x * 500:
