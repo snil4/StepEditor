@@ -24,7 +24,13 @@ var cur_div = 4
 var cur_snap: int = 0
 var cur_mode: int = 4
 @export var speed_mod = 2.0
+# Dictionary for keeping note information for saving
 var notes_array: Dictionary = {}
+# Dictionaries for keeping song changes information for saving
+var bpm_array: Dictionary = {}
+var delay_array: Dictionary = {}
+var split_array: Dictionary = {}
+var div_array: Dictionary = {}
 
 # Numeric values of the cur_snap options
 const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09375, 0.03125, 0.015625]

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://niachvh8jgkt"]
+
+[ext_resource type="Script" path="res://Scripts/Menus/RecentMenu.gd" id="1_bbprf"]
+
+[node name="RecentMenu" type="PopupMenu"]
+title = "Open Recent"
+visible = true
+script = ExtResource("1_bbprf")
+
+[connection signal="index_pressed" from="." to="." method="_on_index_pressed"]

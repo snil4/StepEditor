@@ -9,6 +9,7 @@ var cur_property = []
 var cur_split: int
 var cur_measure: int
 var cur_beat: float
+var save_string: String
 
 @onready var measure_container_node = $"/root/Main/Editor/Area2D/MeasureContainer"
 @onready var editor_node = $"/root/Main/Editor"
@@ -18,6 +19,7 @@ signal music_loaded(file :String)
 signal mode_changed(mode: int)
 signal bpm_changed(bpm: float)
 signal div_changed(div: int)
+signal delay_changed(delay: int)
 
 # Called when the node enters the scene tree for the first time.
 # func _ready():
@@ -28,7 +30,7 @@ func load_music():
 
 	file_path = main_node.properties["folder"] + "/" + main_node.properties["music"]
 
-	if main_node.properties["Title"] == null:
+	if not(main_node.properties.has("Title")):
 		main_node.properties["Title"] = main_node.properties["music"].rsplit(".",true,1)[0]
 
 	if main_node.properties["music"].to_lower().ends_with(".ogg"):
@@ -122,6 +124,9 @@ func parse_ucs():
 					if cur_property[1].to_lower() == "double":
 						main_node.cur_mode = 10
 						mode_changed.emit(10)
+
+				"delay":
+					delay_changed.emit(int(cur_property[1]))
 			
 		# Chart
 		elif line.length() > 0:
@@ -184,5 +189,22 @@ func open_file(full_path: String) -> FileAccess:
 
 
 func save_file():
+	save_string = ""
+
+
+func write_ucs():
+	save_string += ":Format = 1"
+
+	if main_node.cur_node == 10:
+		save_string += ":Mode = Double"
+
+	else:
+		save_string += ":Mode = Single"
+
+	save_string += ":BPM = " + main_node.cur_bpm
+	save_string += ":Delay = " + main_node.cur_delay
+	save_string += ":Beat = " + main_node.cur_div
+	save_string += ":Split = " + main_node.cur_split
+
 	for i in main_node.notes_array.size():
-		pass
+		save_string += ""

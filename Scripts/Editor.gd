@@ -45,6 +45,7 @@ signal snap_changed(snap :int)
 signal beat_changed(beat :int)
 signal play()
 signal recent_added(path: String)
+signal load_recent(path: String)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -58,6 +59,7 @@ func _ready():
 	get_tree().get_root().size_changed.connect(Callable(self, "change_window"))
 	get_viewport().files_dropped.connect(Callable(self, "_on_files_drop"))
 	parser_node.mode_changed.connect(Callable(self, "set_mode"))
+	load_recent.connect(Callable(self, "on_recent_load"))
 	
 	measure_container_node.draw_measures()
 	
@@ -235,6 +237,20 @@ func _on_file_dialog_1_file_selected(_path):
 	load_file()
 
 
+# Called on dropping files to the editor
+func on_recent_load(path):
+
+	main_node.properties.clear()
+
+	var split = path.rsplit("/",false,1)
+	print(split)
+
+	main_node.file_name = split[1]
+	main_node.properties["folder"] = split[0]
+
+	load_file()
+
+
 func load_file():
 
 	main_node.notes_array.clear()
@@ -242,14 +258,15 @@ func load_file():
 		notes_collection_node.remove_child(i)
 		i.queue_free()
 
-	recent_added.emit(main_node.properties["folder"] + "/" + main_node.file_name)
 	var split = main_node.file_name.split(".",false,1)
 
 	if music_file_types.has(split[1]):
+		recent_added.emit(main_node.properties["folder"] + "/" + main_node.file_name)
 		main_node.properties["music"] = main_node.file_name
 		parser_node.load_music()
 
 	elif chart_file_types.has(split[1]):
+		recent_added.emit(main_node.properties["folder"] + "/" + main_node.file_name)
 		main_node.properties["chart"] = main_node.file_name
 		parser_node.load_chart()
 		
