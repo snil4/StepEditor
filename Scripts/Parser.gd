@@ -9,7 +9,11 @@ var cur_property = []
 var cur_split: int
 var cur_measure: int
 var cur_beat: float
+var cur_div: int
+var cur_delay: int
+var cur_bpm: int
 var save_string: String
+var count: int
 
 @onready var measure_container_node = $"/root/Main/Editor/Area2D/MeasureContainer"
 @onready var editor_node = $"/root/Main/Editor"
@@ -89,7 +93,9 @@ func parse_details() -> bool:
 
 func parse_ucs():
 	# Default single mode for pump
+	measure_container_node.clear_measures()
 	mode_changed.emit(5)
+	count = 0
 	
 	# Set global file path for the chart
 	file_path = main_node.properties["folder"] + "/" + main_node.properties["chart"]
@@ -109,13 +115,13 @@ func parse_ucs():
 				
 				"bpm":
 					bpm_changed.emit(float(cur_property[1]))
-					measure_container_node.clear_measures()
-					measure_container_node.draw_measures()
+					measure_container_node.draw_measures(count)
+					count = 0
 					
 				"beat":
 					div_changed.emit(int(cur_property[1]))
-					measure_container_node.clear_measures()
-					measure_container_node.draw_measures()
+					measure_container_node.draw_measures(count)
+					count = 0
 					
 				"split":
 					cur_split=int(cur_property[1])
@@ -159,6 +165,10 @@ func parse_ucs():
 
 				cur_beat += 1.0 / float(cur_split)
 				measure_fix()
+		
+		else:
+			measure_container_node.draw_measures(count)
+			count = 0
 
 
 # Fix the current measure number based on the current beat
@@ -171,6 +181,7 @@ func measure_fix():
 	elif cur_beat >= main_node.cur_div + 1:
 		cur_beat = 1.0
 		cur_measure += 1
+		count += 1
 
 	if cur_measure < 1:
 		cur_beat = 1.0
@@ -190,21 +201,73 @@ func open_file(full_path: String) -> FileAccess:
 
 func save_file():
 	save_string = ""
+	cur_measure = 1
+	cur_beat = 1.0
 
 
 func write_ucs():
 	save_string += ":Format = 1"
 
-	if main_node.cur_node == 10:
+	if main_node.cur_mode == 10:
 		save_string += ":Mode = Double"
 
 	else:
 		save_string += ":Mode = Single"
 
-	save_string += ":BPM = " + main_node.cur_bpm
-	save_string += ":Delay = " + main_node.cur_delay
-	save_string += ":Beat = " + main_node.cur_div
-	save_string += ":Split = " + main_node.cur_split
+	save_string += ":BPM = " + main_node.bpm_array[cur_measure * 1000 + cur_beat * 128]
 
-	for i in main_node.notes_array.size():
-		save_string += ""
+	cur_delay = main_node.delay_array[cur_measure * 1000 + cur_beat * 128]
+	save_string += ":Delay = " + main_node.delay_array[cur_measure * 1000 + cur_beat * 128]
+
+	cur_div = main_node.div_array[cur_measure * 1000 + cur_beat * 128]
+	save_string += ":Beat = " + str(cur_div)
+
+	cur_split = main_node.split_array[cur_measure * 1000 + cur_beat * 128]
+	save_string += ":Split = " + str(cur_split)
+
+	for i in measure_container_node.cur_measure:
+
+		for j in cur_div * cur_split:
+
+			var found = false
+
+			if main_node.bpm_array.has(cur_measure * 1000 + cur_beat * 128):
+
+				save_string += ":BPM = " + main_node.bpm_array[cur_measure * 1000 + cur_beat * 128]
+				found = true
+
+			if main_node.delay_array.has(cur_measure * 1000 + cur_beat * 128) or found:
+
+				if not(found):
+					save_string += ":BPM = " + str(cur_bpm)
+				
+				if main_node.delay_array.has(cur_measure * 1000 + cur_beat * 128):
+					cur_delay = main_node.delay_array[cur_measure * 1000 + cur_beat * 128]
+
+				save_string += ":Delay = " + str(cur_delay)
+				found = true
+
+			if main_node.div_array.has(cur_measure * 1000 + cur_beat * 128) or found:
+
+				if not(found):
+					save_string += ":BPM = " + str(cur_bpm)
+					save_string += ":Delay = " + str(cur_delay)
+
+				if main_node.div_array.has(cur_measure * 1000 + cur_beat * 128):
+					cur_div = main_node.div_array[cur_measure * 1000 + cur_beat * 128]
+
+				save_string += ":Beat = " + str(cur_div)
+				found = true
+
+			if main_node.split_array.has(cur_measure * 1000 + cur_beat * 128) or found:
+
+				if not(found):
+					save_string += ":BPM = " + str(cur_bpm)
+					save_string += ":Delay = " + str(cur_delay)
+					save_string += ":Beat = " + str(cur_div)
+
+				if main_node.split_array.has(cur_measure * 1000 + cur_beat * 128):
+					cur_split = main_node.split_array[cur_measure * 1000 + cur_beat * 128]
+					
+				save_string += ":Split = " + str(cur_split)
+				found = true

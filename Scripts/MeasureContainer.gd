@@ -4,6 +4,8 @@ var next_y: int
 @export var measure_width: int = 3
 # Note scene for creating new note nodes
 var note_scene = preload("res://Scenes/Note.tscn")
+var cur_measure: int = 1
+var cur_beat: float = 1.0
 # Measure line scene for creating new measure line nodes
 const measure_scene = preload("res://Scenes/MeasureLine.tscn")
 
@@ -41,6 +43,9 @@ func clear_measures():
 		measures_collection_node.remove_child(i)
 		i.queue_free()
 
+	cur_beat = 1.0
+	cur_measure = 1
+
 
 func change_speed():
 	draw_measures()
@@ -65,12 +70,15 @@ func draw_measure(measure: int, beat: float):
 
 
 # Draw all the measures in the scene
-func draw_measures():
-	clear_measures()
+func draw_measures(amount: int = 100):
 
-	for i in 100:
+	for i in amount:
 		for j in main_node.cur_div:
-			draw_measure(i + 1, j + 1)
+			draw_measure(cur_measure, cur_beat)
+			cur_beat += 1
+		cur_measure += 1
+		cur_beat = 1
+		
 
 
 func add_note_node(num: int, measure: int, beat: float):
