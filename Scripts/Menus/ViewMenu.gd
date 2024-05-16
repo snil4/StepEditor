@@ -4,6 +4,7 @@ var touchMode = false
 
 @onready var about_node = get_node("/root/Main/AboutDialog")
 @onready var speed_node = get_node("/root/Main/SpeedWindow")
+@onready var touch_node = get_node("/root/Main/TouchButtons")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -21,8 +22,11 @@ func _ready():
 func _on_item_pressed(id):
 
 	match id:
+
 		0:
 			touchMode = not(touchMode)
 			get_popup().set_item_checked(id,touchMode)
+			touch_node.visible = touchMode
+
 		1:
 			speed_node.on_display()

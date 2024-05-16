@@ -40,6 +40,7 @@ const target10k_path = "res://Scenes/Targets/Target10k.tscn"
 @onready var cubes_node = $Area2D/Cubes
 @onready var snap_node = $CanvasLayer/SnapText
 @onready var notes_collection_node = $Area2D/MeasureContainer/NotesCollection
+@onready var touch_node = $"/root/Main/TouchButtons"
 
 signal snap_changed(snap :int)
 signal beat_changed(beat :int)
@@ -102,6 +103,17 @@ func change_window():
 		area2d_node.position.x += (window_size.x - last_window_x) / 4
 
 	last_window_x = window_size.x
+
+	# Touch buttons
+	touch_node.position.y = window_size.y - 100
+
+	var touch_buttons = touch_node.get_children()
+	var i = 0
+
+	for touch_button in touch_buttons:
+		touch_button.shape.get_rect().grow_side(3, window_size.x / touch_node.get_child_count())
+		touch_button.position.x = i * (window_size.x / touch_node.get_child_count())
+		i += 1
 
 
 # Called on every key input

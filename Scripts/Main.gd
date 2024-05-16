@@ -37,7 +37,6 @@ const snap_options = [0.015625 ,1, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0.09
 const speed_pow = 50
 
 @onready var rect_node = $"MenuBar/ColorRect"
-@onready var touch_node = $TouchButtons
 @onready var editor_node = $Editor
 @onready var parser_node = $Parser
 
@@ -68,7 +67,7 @@ func _ready():
 	editor_node.change_window()
 	parser_node.mode_changed.emit(5)
 	
-	editor_node.initial = false
+	editor_node.initial = false 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -116,10 +115,6 @@ func measure_fix():
 func change_window():
 	size = get_window().get_size_with_decorations()
 	rect_node.set_size(Vector2(size.x, 41.0))
-
-
-func set_touch_mode(state: bool):
-	touch_node.visible = state
 
 
 func save_game():
