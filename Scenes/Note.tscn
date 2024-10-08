@@ -21,15 +21,15 @@ region = Rect2(128, 0, 64, 64)
 atlas = ExtResource("1_ka781")
 region = Rect2(192, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hblhy"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_sl1ye"]
 atlas = ExtResource("2_plesu")
 region = Rect2(0, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_7kyo8"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_qsrc8"]
 atlas = ExtResource("2_plesu")
 region = Rect2(64, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wd0nm"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_dbmst"]
 atlas = ExtResource("2_plesu")
 region = Rect2(128, 0, 64, 64)
 
@@ -69,7 +69,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hblhy")
+"texture": SubResource("AtlasTexture_sl1ye")
 }],
 "loop": true,
 "name": &"5k_1",
@@ -77,7 +77,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_7kyo8")
+"texture": SubResource("AtlasTexture_qsrc8")
 }],
 "loop": true,
 "name": &"5k_2",
@@ -85,7 +85,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wd0nm")
+"texture": SubResource("AtlasTexture_dbmst")
 }],
 "loop": true,
 "name": &"5k_3",
@@ -93,6 +93,7 @@ animations = [{
 }]
 
 [node name="Note" type="Node2D"]
+z_index = 1
 scale = Vector2(3, 3)
 
 [node name="Area2D" type="Area2D" parent="."]

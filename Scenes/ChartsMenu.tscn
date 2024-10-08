@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dgfikengsh3au"]
+
+[ext_resource type="Script" path="res://Scripts/Menus/ChartsMenu.gd" id="1_tbr0t"]
+
+[node name="ChartsMenu" type="PopupMenu"]
+title = "Open Recent"
+visible = true
+script = ExtResource("1_tbr0t")
+
+[connection signal="index_pressed" from="." to="." method="_on_index_pressed"]

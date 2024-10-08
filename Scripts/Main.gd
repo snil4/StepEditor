@@ -39,6 +39,7 @@ const speed_pow = 50
 @onready var rect_node = $"MenuBar/ColorRect"
 @onready var editor_node = $Editor
 @onready var parser_node = $Parser
+@onready var speed_node = $SpeedWindow
 
 
 # Called when the node enters the scene tree for the first time.

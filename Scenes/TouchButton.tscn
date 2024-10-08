@@ -1,0 +1,53 @@
+[gd_scene load_steps=11 format=3 uid="uid://dud6ow7bbvd4e"]
+
+[ext_resource type="Script" path="res://Scripts/TouchButton.gd" id="1_7ssw1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bo8a0"]
+size = Vector2(100, 100)
+
+[sub_resource type="Gradient" id="Gradient_2bnno"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0.0980985, 0.0980985, 0.0980984, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_c7d0d"]
+gradient = SubResource("Gradient_2bnno")
+
+[sub_resource type="QuadMesh" id="QuadMesh_jwitf"]
+size = Vector2(100, 100)
+center_offset = Vector3(50, 50, 0)
+
+[sub_resource type="MeshTexture" id="MeshTexture_4bqqa"]
+mesh = SubResource("QuadMesh_jwitf")
+base_texture = SubResource("GradientTexture1D_c7d0d")
+image_size = Vector2(100, 100)
+
+[sub_resource type="Gradient" id="Gradient_wk0p3"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0.223103, 0.223103, 0.223103, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6eehg"]
+gradient = SubResource("Gradient_wk0p3")
+
+[sub_resource type="QuadMesh" id="QuadMesh_xio20"]
+size = Vector2(100, 100)
+center_offset = Vector3(50, 50, 0)
+
+[sub_resource type="MeshTexture" id="MeshTexture_gsvip"]
+mesh = SubResource("QuadMesh_xio20")
+base_texture = SubResource("GradientTexture1D_6eehg")
+image_size = Vector2(100, 100)
+
+[node name="Insert1" type="TouchScreenButton"]
+shape = SubResource("RectangleShape2D_bo8a0")
+action = "Insert_1"
+script = ExtResource("1_7ssw1")
+
+[node name="PressedSprite" type="Sprite2D" parent="."]
+visible = false
+texture = SubResource("MeshTexture_4bqqa")
+
+[node name="NormalSprite" type="Sprite2D" parent="."]
+texture = SubResource("MeshTexture_gsvip")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]
+[connection signal="released" from="." to="." method="_on_released"]

@@ -4,6 +4,7 @@ var next_y: int
 @export var measure_width: int = 3
 # Note scene for creating new note nodes
 var note_scene = preload("res://Scenes/Note.tscn")
+var hold_scene = preload("res://Scenes/Hold.tscn")
 var cur_measure: int = 1
 var cur_beat: float = 1.0
 # Measure line scene for creating new measure line nodes
@@ -72,6 +73,8 @@ func draw_measure(measure: int, beat: float):
 # Draw all the measures in the scene
 func draw_measures(amount: int = 100):
 
+	clear_measures()
+
 	for i in amount:
 		for j in main_node.cur_div:
 			draw_measure(cur_measure, cur_beat)
@@ -118,6 +121,63 @@ func add_note_node(num: int, measure: int, beat: float):
 
 			else:
 				animation_node.set_animation("5k_" + str(num))
+
+	notes_collection_node.add_child(note_node)
+
+
+func add_hold_node(num: int, measure: int, beat: float, end:bool = false):
+
+	if num > main_node.cur_mode:
+		return
+
+	var note_node = hold_scene.instantiate()
+	if end:
+		note_node.set_name(("end" + str(num) + "_" + str(measure)
+							+ "_" + str(beat)).replace(".","-"))
+	else:
+		note_node.set_name(("hold" + str(num) + "_" + str(measure)
+							+ "_" + str(beat)).replace(".","-"))
+
+	var animation_node = note_node.get_node("AnimatedSprite2D")
+	if not(end):
+		note_node.set_scale(Vector2(3.,3.))
+
+	match main_node.cur_mode:
+
+		4:
+			if end:
+				animation_node.set_animation("4k_1_end")
+			else:
+				animation_node.set_animation("4k_1")
+			# note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)))
+			note_node.set_position(Vector2(-165 + 65 * num,(((measure - 1) * 4) + beat - 1) * (main_node.speed_mod * main_node.speed_pow)))
+
+			match num:
+				1:
+					animation_node.set_rotation_degrees(90)
+
+				3:
+					animation_node.set_rotation_degrees(180)
+
+				4:
+					animation_node.set_rotation_degrees(-90)
+
+		5:
+			# note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (main_node.cur_bpm / main_node.speed_mod)))
+			note_node.set_position(Vector2(-193 + 64 * num,(((measure - 1) * 4) + beat - 1) * (main_node.speed_mod * main_node.speed_pow)))
+
+			if num > 3:
+				animation_node.flip_h = true
+				if end:
+					animation_node.set_animation("5k_" + str(num * -1 + 6) + "_end")
+				else:
+					animation_node.set_animation("5k_" + str(num * -1 + 6))
+
+			else:
+				if end:
+					animation_node.set_animation("5k_" + str(num) + "_end")
+				else:
+					animation_node.set_animation("5k_" + str(num))
 
 	notes_collection_node.add_child(note_node)
 

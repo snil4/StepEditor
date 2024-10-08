@@ -111,7 +111,7 @@ func change_window():
 	var i = 0
 
 	for touch_button in touch_buttons:
-		touch_button.shape.get_rect().grow_side(3, window_size.x / touch_node.get_child_count())
+		touch_button.shape.size.x = window_size.x / touch_node.get_child_count()
 		touch_button.position.x = i * (window_size.x / touch_node.get_child_count())
 		i += 1
 

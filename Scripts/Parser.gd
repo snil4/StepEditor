@@ -14,6 +14,7 @@ var cur_delay: int
 var cur_bpm: int
 var save_string: String
 var count: int
+var hold_start = 0
 
 @onready var measure_container_node = $"/root/Main/Editor/Area2D/MeasureContainer"
 @onready var editor_node = $"/root/Main/Editor"
@@ -75,10 +76,15 @@ func load_chart():
 			# Header
 			if line.begins_with("#"):
 				cur_property = line.split(":",true,1)
+				if cur_property[0].to_lower().begins_with("#notedata"):
+					break
 				main_node.properties[cur_property[0].to_lower()] = cur_property[1].replace("; ", "")
 
-			elif line.begins_with("//---------------"):
-				break
+			# Steps
+			
+
+			# elif line.to_upper().begins_with("#NOTEDATA"):
+			# 	break
 
 			# index += 1
 
@@ -152,16 +158,24 @@ func parse_ucs():
 					elif line_buffer[i] == 77:
 						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "M"
 						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+						hold_start = 0
 
 					# H
 					elif line_buffer[i] == 72:
 						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "H"
-						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+						if hold_start >= 0.25:
+							measure_container_node.add_hold_node(i + 1,cur_measure,cur_beat, false)
+							hold_start = 0
+						else:
+							hold_start += 1.0 / float(cur_split)
 
 					# W
 					elif line_buffer[i] == 87:
 						main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + i / 10.0] = "W"
-						measure_container_node.add_note_node(i + 1,cur_measure,cur_beat)
+						if hold_start > 0:
+							measure_container_node.add_hold_node(i + 1,cur_measure,cur_beat - 1.0 / float(cur_split), false)
+							hold_start = 0
+						measure_container_node.add_hold_node(i + 1,cur_measure,cur_beat, true)
 
 				cur_beat += 1.0 / float(cur_split)
 				measure_fix()
@@ -209,21 +223,10 @@ func write_ucs():
 	save_string += ":Format = 1"
 
 	if main_node.cur_mode == 10:
-		save_string += ":Mode = Double"
+		save_string += "\n:Mode = Double"
 
 	else:
-		save_string += ":Mode = Single"
-
-	save_string += ":BPM = " + main_node.bpm_array[cur_measure * 1000 + cur_beat * 128]
-
-	cur_delay = main_node.delay_array[cur_measure * 1000 + cur_beat * 128]
-	save_string += ":Delay = " + main_node.delay_array[cur_measure * 1000 + cur_beat * 128]
-
-	cur_div = main_node.div_array[cur_measure * 1000 + cur_beat * 128]
-	save_string += ":Beat = " + str(cur_div)
-
-	cur_split = main_node.split_array[cur_measure * 1000 + cur_beat * 128]
-	save_string += ":Split = " + str(cur_split)
+		save_string += "\n:Mode = Single"
 
 	for i in measure_container_node.cur_measure:
 
@@ -244,30 +247,41 @@ func write_ucs():
 				if main_node.delay_array.has(cur_measure * 1000 + cur_beat * 128):
 					cur_delay = main_node.delay_array[cur_measure * 1000 + cur_beat * 128]
 
-				save_string += ":Delay = " + str(cur_delay)
+				save_string += "\n:Delay = " + str(cur_delay)
 				found = true
 
 			if main_node.div_array.has(cur_measure * 1000 + cur_beat * 128) or found:
 
 				if not(found):
 					save_string += ":BPM = " + str(cur_bpm)
-					save_string += ":Delay = " + str(cur_delay)
+					save_string += "\n:Delay = " + str(cur_delay)
 
 				if main_node.div_array.has(cur_measure * 1000 + cur_beat * 128):
 					cur_div = main_node.div_array[cur_measure * 1000 + cur_beat * 128]
 
-				save_string += ":Beat = " + str(cur_div)
+				save_string += "\n:Beat = " + str(cur_div)
 				found = true
 
 			if main_node.split_array.has(cur_measure * 1000 + cur_beat * 128) or found:
 
 				if not(found):
 					save_string += ":BPM = " + str(cur_bpm)
-					save_string += ":Delay = " + str(cur_delay)
-					save_string += ":Beat = " + str(cur_div)
+					save_string += "\n:Delay = " + str(cur_delay)
+					save_string += "\n:Beat = " + str(cur_div)
 
 				if main_node.split_array.has(cur_measure * 1000 + cur_beat * 128):
 					cur_split = main_node.split_array[cur_measure * 1000 + cur_beat * 128]
 					
-				save_string += ":Split = " + str(cur_split)
-				found = true
+				save_string += "\n:Split = " + str(cur_split)
+				save_string += "\n\n"
+
+			for k in main_node.cur_mode:
+
+				if main_node.notes_array.has(cur_measure * 1000 + cur_beat * 128 + k / 10.0):
+					save_string += main_node.notes_array[cur_measure * 1000 + cur_beat * 128 + k / 10.0]
+
+				else:
+					save_string += "."
+
+			save_string += "\n"
+			cur_beat += 1.0 / 128.0

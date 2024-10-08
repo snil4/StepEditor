@@ -1,53 +1,20 @@
-[gd_scene load_steps=22 format=3 uid="uid://dpncvve46oilr"]
+[gd_scene load_steps=15 format=3 uid="uid://dpncvve46oilr"]
 
 [ext_resource type="PackedScene" uid="uid://dd2nfqupg7qfe" path="res://Scenes/Editor.tscn" id="1_aw7xw"]
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_cq5ae"]
 [ext_resource type="Script" path="res://Scripts/Menus/FileMenu.gd" id="3_5h0q7"]
 [ext_resource type="Script" path="res://Scripts/MessageDialog.gd" id="4_h1xth"]
+[ext_resource type="Script" path="res://Scripts/Menus/EditMenu.gd" id="4_hbid7"]
 [ext_resource type="Script" path="res://Scripts/Menus/ViewMenu.gd" id="4_wqaoy"]
 [ext_resource type="Script" path="res://Scripts/Menus/HelpMenu.gd" id="5_11n5i"]
 [ext_resource type="Script" path="res://Scripts/Parser.gd" id="5_bb8wl"]
 [ext_resource type="Script" path="res://Scripts/Menus/AboutDialog.gd" id="8_jrbkd"]
 [ext_resource type="Script" path="res://Scripts/Menus/ExitDialog.gd" id="9_84lq8"]
 [ext_resource type="Script" path="res://Scripts/Menus/SpeedWindow.gd" id="10_wm4uq"]
+[ext_resource type="PackedScene" uid="uid://dud6ow7bbvd4e" path="res://Scenes/TouchButton.tscn" id="10_y1pks"]
 [ext_resource type="Script" path="res://Scripts/MusicPlayer.gd" id="11_ndwlc"]
 
 [sub_resource type="Theme" id="Theme_jx621"]
-
-[sub_resource type="Gradient" id="Gradient_jxoij"]
-offsets = PackedFloat32Array(1)
-colors = PackedColorArray(0.184314, 0.184314, 0.184314, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_0wuu0"]
-gradient = SubResource("Gradient_jxoij")
-
-[sub_resource type="QuadMesh" id="QuadMesh_jwitf"]
-size = Vector2(100, 100)
-center_offset = Vector3(50, 50, 0)
-
-[sub_resource type="MeshTexture" id="MeshTexture_4bqqa"]
-mesh = SubResource("QuadMesh_jwitf")
-base_texture = SubResource("GradientTexture1D_0wuu0")
-image_size = Vector2(100, 100)
-
-[sub_resource type="Gradient" id="Gradient_xo42w"]
-offsets = PackedFloat32Array(1)
-colors = PackedColorArray(0.133333, 0.133333, 0.133333, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_33knq"]
-gradient = SubResource("Gradient_xo42w")
-
-[sub_resource type="QuadMesh" id="QuadMesh_tqpwt"]
-size = Vector2(100, 100)
-center_offset = Vector3(50, 50, 0)
-
-[sub_resource type="MeshTexture" id="MeshTexture_8lh6w"]
-mesh = SubResource("QuadMesh_tqpwt")
-base_texture = SubResource("GradientTexture1D_33knq")
-image_size = Vector2(100, 100)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bo8a0"]
-size = Vector2(100, 100)
 
 [node name="Main" type="Control"]
 clip_contents = true
@@ -62,13 +29,12 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 script = ExtResource("1_cq5ae")
-speed_mod = 1.0
 metadata/_edit_use_anchors_ = true
 
 [node name="Editor" parent="." instance=ExtResource("1_aw7xw")]
 
 [node name="MenuBar" type="MenuBar" parent="."]
-z_index = 1
+z_index = 2
 layout_direction = 2
 layout_mode = 1
 auto_translate = false
@@ -89,10 +55,21 @@ flat = false
 switch_on_hover = true
 script = ExtResource("3_5h0q7")
 
-[node name="ViewMenu" type="MenuButton" parent="MenuBar"]
+[node name="EditMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
 offset_left = 111.0
 offset_right = 222.0
+offset_bottom = 41.0
+text = "Edit
+"
+flat = false
+switch_on_hover = true
+script = ExtResource("4_hbid7")
+
+[node name="ViewMenu" type="MenuButton" parent="MenuBar"]
+layout_mode = 0
+offset_left = 222.0
+offset_right = 333.0
 offset_bottom = 41.0
 text = "View
 "
@@ -108,14 +85,14 @@ popup/item_1/id = 3
 popup/item_2/text = ""
 popup/item_2/id = 999
 popup/item_2/separator = true
-popup/item_3/text = "Change Speed"
+popup/item_3/text = "Change Scrolling Speed"
 popup/item_3/id = 1
 script = ExtResource("4_wqaoy")
 
 [node name="SettingsMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
-offset_left = 222.0
-offset_right = 333.0
+offset_left = 333.0
+offset_right = 444.0
 offset_bottom = 41.0
 text = "Settings"
 flat = false
@@ -126,8 +103,8 @@ popup/item_0/id = 0
 
 [node name="HelpMenu" type="MenuButton" parent="MenuBar"]
 layout_mode = 0
-offset_left = 333.0
-offset_right = 444.0
+offset_left = 444.0
+offset_right = 555.0
 offset_bottom = 41.0
 text = "Help"
 flat = false
@@ -180,30 +157,16 @@ script = ExtResource("9_84lq8")
 visible = false
 position = Vector2(2.08165e-12, 500)
 
-[node name="Insert1" type="TouchScreenButton" parent="TouchButtons"]
-texture_normal = SubResource("MeshTexture_4bqqa")
-texture_pressed = SubResource("MeshTexture_8lh6w")
-shape = SubResource("RectangleShape2D_bo8a0")
-action = "Insert_1"
+[node name="Insert1" parent="TouchButtons" instance=ExtResource("10_y1pks")]
 
-[node name="Insert2" type="TouchScreenButton" parent="TouchButtons"]
-texture_normal = SubResource("MeshTexture_4bqqa")
-texture_pressed = SubResource("MeshTexture_8lh6w")
-shape = SubResource("RectangleShape2D_bo8a0")
+[node name="Insert2" parent="TouchButtons" instance=ExtResource("10_y1pks")]
 action = "Insert_2"
 
-[node name="Insert3" type="TouchScreenButton" parent="TouchButtons"]
-texture_normal = SubResource("MeshTexture_4bqqa")
-texture_pressed = SubResource("MeshTexture_8lh6w")
-shape = SubResource("RectangleShape2D_bo8a0")
+[node name="Insert3" parent="TouchButtons" instance=ExtResource("10_y1pks")]
 action = "Insert_3"
 
-[node name="Insert4" type="TouchScreenButton" parent="TouchButtons"]
-texture_normal = SubResource("MeshTexture_4bqqa")
-texture_pressed = SubResource("MeshTexture_8lh6w")
-shape = SubResource("RectangleShape2D_bo8a0")
+[node name="Insert4" parent="TouchButtons" instance=ExtResource("10_y1pks")]
 action = "Insert_4"
-visibility_mode = 1
 
 [node name="SpeedWindow" type="Window" parent="."]
 initial_position = 2
